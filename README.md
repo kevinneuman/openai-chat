@@ -1,4 +1,4 @@
-# <img alt="Logo" src="https://github.com/kevinneuman/openai-chat/assets/17978140/aa36988a-b466-4456-a85a-871e15a2c376" style="width: 16px; height: auto;"> openai-chat
+# <img alt="Logo" src="https://github.com/kevinneuman/openai-chat/blob/main/src/app/icon.png" style="width: 16px; height: auto;"> openai-chat
 
 A cost-effective, mobile-first chat UI, designed with OpenAI API, Next.js, and Tailwind CSS, uses credits for a cheaper alternative to costly subscriptions.
 
@@ -34,13 +34,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### Mobile
 
-<img alt="Mobile Chat" src="https://github.com/kevinneuman/openai-chat/assets/17978140/c3cd4c9c-c552-42ba-9b8a-2e64f500edc0" style="width: 400px; height: auto;">
+<img alt="Mobile Chat" src="https://github.com/kevinneuman/openai-chat/assets/17978140/4237b558-ed57-45e3-8e9c-71a399a9127e" style="width: 400px; height: auto;">
 
-<img alt="Mobile Menu" src="https://github.com/kevinneuman/openai-chat/assets/17978140/8b44ca94-2f58-43b9-9a5a-a1eea4d1c934" style="width: 400px; height: auto;">
+<img alt="Mobile Menu" src="https://github.com/kevinneuman/openai-chat/assets/17978140/a2a9cdc3-99a0-45fb-ae6c-f018c6ba5a4e" style="width: 400px; height: auto;">
 
 ### Desktop
 
-<img alt="Desktop" src="https://github.com/kevinneuman/openai-chat/assets/17978140/42b36b19-4613-4654-8dc1-bab7278d2393" style="width: 800px; height: auto;">
+<img alt="Desktop" src="https://github.com/kevinneuman/openai-chat/assets/17978140/0282427e-7765-439b-98e0-72f689040eb4" style="width: 800px; height: auto;">
 
 ## Deploy on Vercel
 
