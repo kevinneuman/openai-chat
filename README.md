@@ -1,10 +1,6 @@
-# openai-chat
+# <img alt="Logo" src="https://github.com/kevinneuman/openai-chat/assets/17978140/aa36988a-b466-4456-a85a-871e15a2c376" style="width: 16px; height: auto;"> openai-chat
 
 A cost-effective, mobile-first chat UI, designed with OpenAI API, Next.js, and Tailwind CSS, uses credits for a cheaper alternative to costly subscriptions.
-
-## Next.js
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
@@ -34,18 +30,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Screenshots
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Mobile
 
-## Learn More
+<img alt="Mobile Chat" src="https://github.com/kevinneuman/openai-chat/assets/17978140/c3cd4c9c-c552-42ba-9b8a-2e64f500edc0" style="width: 400px; height: auto;">
 
-To learn more about Next.js, take a look at the following resources:
+<img alt="Mobile Menu" src="https://github.com/kevinneuman/openai-chat/assets/17978140/8b44ca94-2f58-43b9-9a5a-a1eea4d1c934" style="width: 400px; height: auto;">
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Desktop
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+<img alt="Desktop" src="https://github.com/kevinneuman/openai-chat/assets/17978140/42b36b19-4613-4654-8dc1-bab7278d2393" style="width: 800px; height: auto;">
 
 ## Deploy on Vercel
 
