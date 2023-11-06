@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'chatgpt-openai-api',
-  description: 'chatgpt-openai-api',
+  title: 'openai-chat',
+  description: 'openai-chat',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

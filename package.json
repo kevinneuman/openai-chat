@@ -1,5 +1,5 @@
 {
-  "name": "chatgpt-openai-api",
+  "name": "openai-chat",
   "version": "0.1.0",
   "private": true,
   "scripts": {
