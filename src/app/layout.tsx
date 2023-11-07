@@ -5,8 +5,9 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'openai-chat',
-  description: 'openai-chat',
+  title: 'OpenAI Chat',
+  description:
+    'A cost-effective, mobile-first chat UI, designed with OpenAI API, Next.js, and Tailwind CSS, uses credits for a cheaper alternative to costly subscriptions.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
