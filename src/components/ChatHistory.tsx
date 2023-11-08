@@ -37,13 +37,17 @@ export default function ChatHistory() {
           className={`flex rounded ${chat.isSelected ? 'bg-gray-600' : 'bg-gray-800'}`}
         >
           <button
+            aria-label={title(chat)}
             className="overflow-hidden flex flex-1 items-center gap-2 p-4"
             onClick={() => handleChatClick(chat)}
           >
             <PiChatBold className="shrink-0" />
-            <p className="overflow-hidden whitespace-nowrap text-ellipsis text-sm">{title(chat)}</p>
+            <label className="overflow-hidden whitespace-nowrap text-ellipsis text-sm">
+              {title(chat)}
+            </label>
           </button>
           <button
+            aria-label="remove chat"
             className="flex items-center p-4 rounded-r bg-gray-700 active:text-red-200"
             onClick={() => delChat(chat.id)}
           >

@@ -71,6 +71,7 @@ export default function Chat() {
           onSendMessage={handleSendMessage}
         />
         <button
+          aria-label="send message"
           className="flex items-center justify-center p-4 rounded bg-green-500"
           onClick={handleSendMessageClick}
         >

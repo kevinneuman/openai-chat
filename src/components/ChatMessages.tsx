@@ -56,7 +56,11 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
       {(isLoading || errorMessage) && (
         <div className="flex flex-col flex-1 items-center justify-end">
           {isLoading && (
-            <button className="flex gap-2 items-center p-4 rounded bg-gray-800" onClick={stop}>
+            <button
+              aria-label="stop generate"
+              className="flex gap-2 items-center p-4 rounded bg-gray-800"
+              onClick={stop}
+            >
               <PiStopFill />
               <p className="text-sm">Stop</p>
             </button>

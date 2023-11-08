@@ -24,6 +24,7 @@ export default function MobileMenu() {
         <div className="flex gap-2 items-center justify-between p-2 rounded-lg bg-gray-900">
           <ModelSelect instanceId="model-select-mobile" />
           <button
+            aria-label="close menu"
             className="flex items-center justify-center p-4 rounded outline-none bg-gray-800"
             onClick={close}
           >
@@ -43,6 +44,7 @@ export default function MobileMenu() {
     <div className="md:hidden flex gap-2 items-center justify-between p-2 rounded-lg bg-gray-900">
       <ModelSelect instanceId="model-select-mobile" />
       <button
+        aria-label="open menu"
         className="flex items-center justify-center p-4 rounded outline-none bg-gray-800"
         onClick={open}
       >

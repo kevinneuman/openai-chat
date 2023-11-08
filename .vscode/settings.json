@@ -1,0 +1,22 @@
+{
+  "editor.tabSize": 2,
+  "window.zoomLevel": 0,
+  "editor.fontSize": 12,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "files.eol": "\n",
+  "search.exclude": {
+    "**/yarn.lock": true,
+    "**/package-lock": true,
+    "**/build": true,
+    "**/.eslintcache": true,
+    "**/package-lock.json": true,
+    "**/docs": true,
+    "**/public/ffmpeg": true,
+    "**/tsconfig.tsbuildinfo": true,
+    "**/.tsbuildinfo": true,
+    "**/.cache*": true,
+    "**/.next*": true,
+    "**/prisma.d.ts": true
+  }
+}
