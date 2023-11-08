@@ -11,8 +11,11 @@ export const runtime = 'edge'
 
 export async function POST(req: Request) {
   try {
-    const { messages, model }: { messages: ChatCompletionMessageParam[]; model: string } =
-      await req.json()
+    const {
+      messages,
+      model,
+      role,
+    }: { messages: ChatCompletionMessageParam[]; model: string; role: string } = await req.json()
 
     const response = await openai.chat.completions.create({
       model,
@@ -20,7 +23,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: 'system',
-          content: '',
+          content: role,
         },
         ...messages,
       ],
