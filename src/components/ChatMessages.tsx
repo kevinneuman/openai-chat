@@ -42,7 +42,12 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
         <ChatMessage key={message.id} message={message} />
       ))}
 
-      {isLoading && <p className="p-2">...</p>}
+      {isLoading && messages[messages.length - 1].role === 'user' && (
+        <ChatMessage
+          key={'bot-message-loading'}
+          message={{ id: 'bot-message-loading', content: '...', role: 'assistant' }}
+        />
+      )}
 
       {!isLoading && !errorMessage && messages.length === 0 && (
         <p className="text-gray-400">No messages</p>
