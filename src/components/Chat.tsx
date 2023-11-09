@@ -7,7 +7,7 @@ import ChatMessages from './ChatMessages'
 import ChatTextarea from './ChatTextarea'
 import { useChatStore } from '@/zustand/chats'
 import { useModelStore } from '@/zustand/models'
-import { useRolesStore } from '@/zustand/roles'
+import { useSettingsStore } from '@/zustand/settings'
 
 export default function Chat() {
   const chats = useChatStore((state) => state.chats)
@@ -16,7 +16,8 @@ export default function Chat() {
   const models = useModelStore((state) => state.models)
   const selectedChat = chats?.find((chat) => chat.isSelected)
   const selectedModel = models.find((model) => model.isSelected)
-  const role = useRolesStore((state) => state.role)
+  const role = useSettingsStore((state) => state.role)
+  const apiKey = useSettingsStore((state) => state.apiKey)
   const {
     error,
     handleInputChange,
@@ -52,7 +53,7 @@ export default function Chat() {
   const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
     handleSubmit(event, {
       options: {
-        body: { model: selectedModel?.name, role: role.trim() },
+        body: { model: selectedModel?.name, role, apiKey },
       },
     })
   }

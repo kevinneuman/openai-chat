@@ -32,6 +32,10 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
     }
   }
 
+  const lastMessage = messages?.[messages.length - 1]
+
+  const shouldShowBotLoadingMessage = isLoading && lastMessage && lastMessage.role === 'user'
+
   return (
     <div
       className={`overflow-auto flex flex-col flex-1 gap-2 items-center ${justify} p-2 rounded-lg bg-gray-900`}
@@ -42,7 +46,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
         <ChatMessage key={message.id} message={message} />
       ))}
 
-      {isLoading && messages[messages.length - 1].role === 'user' && (
+      {shouldShowBotLoadingMessage && (
         <ChatMessage
           key={'bot-message-loading'}
           message={{ id: 'bot-message-loading', content: '...', role: 'assistant' }}

@@ -1,10 +1,10 @@
 'use client'
 
 import { PiListBold, PiXBold } from 'react-icons/pi'
-import AssignRole from './AssignRole'
 import ChatHistory from './ChatHistory'
 import ModelSelect from './ModelSelect'
 import NewChatButton from './NewChatButton'
+import SettingsModal from './SettingsModal'
 import { useMobileMenuStore } from '@/zustand/mobileMenu'
 
 export default function MobileMenu() {
@@ -44,7 +44,7 @@ export default function MobileMenu() {
   return (
     <div className="md:hidden flex gap-2 items-center justify-between p-2 rounded-lg bg-gray-900">
       <ModelSelect instanceId="model-select-mobile" />
-      <AssignRole />
+      <SettingsModal />
       <button
         aria-label="open menu"
         className="flex items-center justify-center p-4 rounded outline-none bg-gray-800"
