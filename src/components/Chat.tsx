@@ -33,6 +33,7 @@ export default function Chat() {
     initialMessages: selectedChat?.messages,
   })
   const [selectedChatId, setSelectedChatId] = useState<number | undefined>(selectedChat?.id)
+  const [lastValidInput, setLastValidInput] = useState(input)
 
   useEffect(() => {
     if (selectedChat && selectedChat.id !== selectedChatId) {
@@ -50,7 +51,15 @@ export default function Chat() {
     updateChatMessages(messages)
   }, [messages, updateChatMessages])
 
+  useEffect(() => {
+    if (error) {
+      setInput(lastValidInput)
+    }
+  }, [error, lastValidInput, setInput])
+
   const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
+    setLastValidInput(input)
+
     handleSubmit(event, {
       options: {
         body: { model: selectedModel?.name, role, apiKey },
