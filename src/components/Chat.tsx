@@ -8,6 +8,7 @@ import ChatTextarea from './ChatTextarea'
 import { useChatStore } from '@/zustand/chats'
 import { useModelStore } from '@/zustand/models'
 import { useSettingsStore } from '@/zustand/settings'
+import { useUtilsStore } from '@/zustand/utils'
 
 export default function Chat() {
   const chats = useChatStore((state) => state.chats)
@@ -18,6 +19,7 @@ export default function Chat() {
   const selectedModel = models.find((model) => model.isSelected)
   const role = useSettingsStore((state) => state.role)
   const apiKey = useSettingsStore((state) => state.apiKey)
+  const { setStopFunction, clearStopFunction } = useUtilsStore()
   const {
     error,
     handleInputChange,
@@ -34,6 +36,13 @@ export default function Chat() {
   })
   const [selectedChatId, setSelectedChatId] = useState<number | undefined>(selectedChat?.id)
   const [lastValidInput, setLastValidInput] = useState(input)
+
+  useEffect(() => {
+    if (stop) {
+      setStopFunction(stop)
+    }
+    return () => clearStopFunction()
+  }, [stop, setStopFunction, clearStopFunction])
 
   useEffect(() => {
     if (selectedChat && selectedChat.id !== selectedChatId) {

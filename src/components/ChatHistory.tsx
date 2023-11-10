@@ -1,14 +1,19 @@
 import { PiChatBold, PiTrashBold } from 'react-icons/pi'
 import { useChatStore, type Chat } from '@/zustand/chats'
 import { useMobileMenuStore } from '@/zustand/mobileMenu'
+import { useUtilsStore } from '@/zustand/utils'
 
 export default function ChatHistory() {
+  const stopFunction = useUtilsStore((state) => state.stopFunction)
   const chats = useChatStore((state) => state.chats)
   const updateChatSelection = useChatStore((state) => state.updateChatSelection)
   const delChat = useChatStore((state) => state.delChat)
   const setIsOpen = useMobileMenuStore((state) => state.setIsOpen)
 
   const handleChatClick = (chat: Chat) => {
+    if (stopFunction) {
+      stopFunction()
+    }
     updateChatSelection(chat.id)
     setIsOpen(false)
   }
@@ -27,6 +32,13 @@ export default function ChatHistory() {
     }
 
     return 'Empty Chat'
+  }
+
+  const handleDelChat = (chatId: number) => {
+    if (stopFunction) {
+      stopFunction()
+    }
+    delChat(chatId)
   }
 
   return (
@@ -49,7 +61,7 @@ export default function ChatHistory() {
           <button
             aria-label="remove chat"
             className="flex items-center p-4 rounded-r bg-gray-700 active:text-red-200"
-            onClick={() => delChat(chat.id)}
+            onClick={() => handleDelChat(chat.id)}
           >
             <PiTrashBold className="shrink-0" />
           </button>

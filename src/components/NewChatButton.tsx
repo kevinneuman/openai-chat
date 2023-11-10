@@ -1,12 +1,17 @@
 import { PiPlusBold } from 'react-icons/pi'
 import { createChat, useChatStore } from '@/zustand/chats'
 import { useMobileMenuStore } from '@/zustand/mobileMenu'
+import { useUtilsStore } from '@/zustand/utils'
 
 export default function NewChatButton() {
+  const stopFunction = useUtilsStore((state) => state.stopFunction)
   const addChat = useChatStore((state) => state.addChat)
   const setIsOpen = useMobileMenuStore((state) => state.setIsOpen)
 
   const handleClick = () => {
+    if (stopFunction) {
+      stopFunction()
+    }
     addChat(createChat())
     setIsOpen(false)
   }
