@@ -24,6 +24,7 @@ export default function MobileMenu() {
       <div className="md:hidden overflow-auto absolute inset-0 flex flex-col gap-2 h-screen p-2 bg-gray-950">
         <div className="flex gap-2 items-center justify-between p-2 rounded-lg bg-gray-900">
           <ModelSelect instanceId="model-select-mobile" />
+          <SettingsModal />
           <button
             aria-label="close menu"
             className="flex items-center justify-center p-4 rounded outline-none bg-gray-800"
