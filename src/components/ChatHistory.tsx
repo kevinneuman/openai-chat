@@ -41,9 +41,11 @@ export default function ChatHistory() {
     delChat(chatId)
   }
 
+  const reversedChats = [...chats].reverse()
+
   return (
-    <ul className="overflow-auto flex flex-col-reverse gap-2">
-      {chats.map((chat) => (
+    <ul className="overflow-auto flex flex-col gap-2 border border-gray-700 rounded h-full p-1">
+      {reversedChats.map((chat) => (
         <li
           key={chat.id}
           className={`flex rounded ${chat.isSelected ? 'bg-gray-600' : 'bg-gray-800'}`}

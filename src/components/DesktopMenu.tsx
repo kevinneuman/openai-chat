@@ -1,5 +1,6 @@
 'use client'
 
+import GizmoPanel from './GizmoPanel'
 import SettingsModal from './SettingsModal'
 import ChatHistory from '@/components/ChatHistory'
 import ModelSelect from '@/components/ModelSelect'
@@ -14,6 +15,8 @@ export default function DesktopMenu() {
       </div>
       <NewChatButton />
       <ChatHistory />
+      <hr className="h-px m-auto w-full border-0 bg-gray-700" />
+      <GizmoPanel />
     </div>
   )
 }
