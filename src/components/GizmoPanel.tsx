@@ -3,10 +3,27 @@ import { IoMdCheckboxOutline } from 'react-icons/io'
 import Modal from './Modal'
 import { useSettingsStore } from '@/zustand/settings'
 
-const featureTypes = {
+type FeatureTypes = {
+  chat: string
+  imageGeneration: string
+  documentQuery: string
+}
+
+const featureTypes: FeatureTypes = {
   chat: 'chat',
   imageGeneration: 'image generation',
   documentQuery: 'document query',
+}
+
+export const getSelectedFeature = (
+  useChat: boolean,
+  useImageGeneration: boolean,
+  useDocumentQuery: boolean,
+) => {
+  if (useChat) return featureTypes.chat
+  if (useImageGeneration) return featureTypes.imageGeneration
+  if (useDocumentQuery) return featureTypes.documentQuery
+  return featureTypes.chat
 }
 
 type CheckboxProps = {
@@ -50,14 +67,9 @@ export default function GizmoPanel() {
   const useDocumentQuery = useSettingsStore((state) => state.useDocumentQuery)
   const updateUseDocumentQuery = useSettingsStore((state) => state.updateUseDocumentQuery)
 
-  const getDefaultFeature = () => {
-    if (useChat) return featureTypes.chat
-    if (useImageGeneration) return featureTypes.imageGeneration
-    if (useDocumentQuery) return featureTypes.documentQuery
-    return null
-  }
-
-  const [selectedFeature, setSelectedFeature] = useState<string | null>(getDefaultFeature())
+  const [selectedFeature, setSelectedFeature] = useState<string | null>(
+    getSelectedFeature(useChat, useImageGeneration, useDocumentQuery),
+  )
 
   const handleSelectFeature = useCallback(
     (feature: string) => {

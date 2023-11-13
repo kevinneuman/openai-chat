@@ -15,7 +15,17 @@ type Props = {
 export default function ChatMessages({ isLoading, messages, stop, error }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true)
-  const errorMessage = error && JSON.parse(error.message).message
+
+  let errorMessage = ''
+  if (error) {
+    try {
+      const errorObject = JSON.parse(error.message)
+      errorMessage = errorObject.message
+    } catch (e) {
+      errorMessage = 'An unexpected error has occurred'
+    }
+  }
+
   const justify = messages.length === 0 ? 'justify-center' : 'justify-start'
 
   useEffect(() => {

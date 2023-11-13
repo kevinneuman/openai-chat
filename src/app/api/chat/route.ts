@@ -14,8 +14,14 @@ export async function POST(req: Request) {
       model,
       role,
       apiKey,
-    }: { messages: ChatCompletionMessageParam[]; model: string; role: string; apiKey: string } =
-      await req.json()
+      selectedFeature,
+    }: {
+      messages: ChatCompletionMessageParam[]
+      model: string
+      role: string
+      apiKey: string
+      selectedFeature: string
+    } = await req.json()
 
     if (apiKey) {
       openai.apiKey = apiKey
@@ -23,21 +29,36 @@ export async function POST(req: Request) {
       openai.apiKey = process.env.OPENAI_API_KEY || ''
     }
 
-    const response = await openai.chat.completions.create({
-      model,
-      stream: true,
-      messages: [
-        {
-          role: 'system',
-          content: role,
-        },
-        ...messages,
-      ],
-    })
+    if (selectedFeature === 'chat') {
+      const response = await openai.chat.completions.create({
+        model,
+        stream: true,
+        messages: [
+          {
+            role: 'system',
+            content: role,
+          },
+          ...messages,
+        ],
+      })
 
-    const stream = OpenAIStream(response)
+      const stream = OpenAIStream(response)
 
-    return new StreamingTextResponse(stream)
+      return new StreamingTextResponse(stream)
+    } else if (selectedFeature === 'image generation') {
+      const prompt = messages[messages.length - 1].content || 'Horse on a ball'
+      const response = await openai.images.generate({
+        prompt,
+        size: '1024x1024',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        model: 'dall-e-3',
+      })
+
+      return NextResponse.json(response)
+    } else {
+      throw new Error(`Unsupported selected feature: ${selectedFeature}`)
+    }
   } catch (error) {
     if (error instanceof OpenAI.APIError) {
       const { name, status, headers, message } = error
