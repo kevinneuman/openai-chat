@@ -7,6 +7,8 @@ import ChatMessages from './ChatMessages'
 import ChatTextarea from './ChatTextarea'
 import { useChatStore } from '@/zustand/chats'
 import { useModelStore } from '@/zustand/models'
+import { useSettingsStore } from '@/zustand/settings'
+import { useUtilsStore } from '@/zustand/utils'
 
 export default function Chat() {
   const chats = useChatStore((state) => state.chats)
@@ -15,6 +17,9 @@ export default function Chat() {
   const models = useModelStore((state) => state.models)
   const selectedChat = chats?.find((chat) => chat.isSelected)
   const selectedModel = models.find((model) => model.isSelected)
+  const role = useSettingsStore((state) => state.role)
+  const apiKey = useSettingsStore((state) => state.apiKey)
+  const { setStopFunction, clearStopFunction } = useUtilsStore()
   const {
     error,
     handleInputChange,
@@ -30,6 +35,14 @@ export default function Chat() {
     initialMessages: selectedChat?.messages,
   })
   const [selectedChatId, setSelectedChatId] = useState<number | undefined>(selectedChat?.id)
+  const [lastValidInput, setLastValidInput] = useState(input)
+
+  useEffect(() => {
+    if (stop) {
+      setStopFunction(stop)
+    }
+    return () => clearStopFunction()
+  }, [stop, setStopFunction, clearStopFunction])
 
   useEffect(() => {
     if (selectedChat && selectedChat.id !== selectedChatId) {
@@ -47,10 +60,18 @@ export default function Chat() {
     updateChatMessages(messages)
   }, [messages, updateChatMessages])
 
+  useEffect(() => {
+    if (error) {
+      setInput(lastValidInput)
+    }
+  }, [error, lastValidInput, setInput])
+
   const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
+    setLastValidInput(input)
+
     handleSubmit(event, {
       options: {
-        body: { model: selectedModel?.name },
+        body: { model: selectedModel?.name, role, apiKey },
       },
     })
   }
@@ -71,6 +92,7 @@ export default function Chat() {
           onSendMessage={handleSendMessage}
         />
         <button
+          aria-label="send message"
           className="flex items-center justify-center p-4 rounded bg-green-500"
           onClick={handleSendMessageClick}
         >

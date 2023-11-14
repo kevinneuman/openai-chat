@@ -22,6 +22,7 @@ export default function ModelSelect({ instanceId }: Props) {
 
   return (
     <ReactSelect
+      aria-label="select model"
       classNames={{
         container: () => 'w-full',
         control: () => 'p-2 !border-none !bg-gray-800',

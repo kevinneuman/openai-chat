@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prepare": "husky install",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -11,6 +12,7 @@
     "verify": "tsc && yarn prettier && yarn lint"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^9.7.2",
     "ai": "^2.2.20",
     "next": "14.0.1",
     "openai": "^4.14.2",
@@ -32,6 +34,7 @@
     "eslint-config-next": "14.0.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.29.0",
+    "husky": "^8.0.3",
     "postcss": "^8",
     "prettier": "3.0.3",
     "tailwindcss": "^3",

@@ -1,0 +1,14 @@
+node_modules
+yarn.lock
+.next
+build
+dist
+coverage
+@types
+cypress
+.vscode
+**/prisma.d.ts
+
+# PWA
+**/sw.js*
+**/workbox-*

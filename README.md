@@ -16,6 +16,8 @@ file in the root and add [your API key](https://platform.openai.com/account/api-
 OPENAI_API_KEY=yourapikey
 ```
 
+_**Note:**_ API key can also be provided from UI but it's much less secure
+
 Then, run the development server:
 
 ```bash
