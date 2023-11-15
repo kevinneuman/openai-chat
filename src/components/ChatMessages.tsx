@@ -4,6 +4,7 @@ import type { Message } from 'ai/react'
 import { useEffect, useRef, useState } from 'react'
 import { PiStopFill } from 'react-icons/pi'
 import ChatMessage from './ChatMessage'
+import LoadingChatMessage from './LoadingChatMessage'
 
 type Props = {
   error?: Error
@@ -56,12 +57,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
         <ChatMessage key={message.id} message={message} />
       ))}
 
-      {shouldShowBotLoadingMessage && (
-        <ChatMessage
-          key={'bot-message-loading'}
-          message={{ id: 'bot-message-loading', content: '...', role: 'assistant' }}
-        />
-      )}
+      {shouldShowBotLoadingMessage && <LoadingChatMessage />}
 
       {!isLoading && !errorMessage && messages.length === 0 && (
         <p className="text-gray-400">No messages</p>

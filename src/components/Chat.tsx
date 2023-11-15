@@ -20,7 +20,9 @@ export default function Chat() {
   const selectedModel = models.find((model) => model.isSelected)
   const role = useSettingsStore((state) => state.role)
   const apiKey = useSettingsStore((state) => state.apiKey)
-  const { setStopFunction, clearStopFunction } = useUtilsStore()
+  const setStopFunction = useUtilsStore((state) => state.setStopFunction)
+  const clearStopFunction = useUtilsStore((state) => state.clearStopFunction)
+
   const {
     error,
     handleInputChange,
@@ -35,6 +37,7 @@ export default function Chat() {
     initialInput: selectedChat?.input,
     initialMessages: selectedChat?.messages,
   })
+
   const [selectedChatId, setSelectedChatId] = useState<number | undefined>(selectedChat?.id)
   const [lastValidInput, setLastValidInput] = useState(input)
 

@@ -48,10 +48,9 @@ export async function POST(req: Request) {
     } else if (selectedFeature === 'image generation') {
       const prompt = messages[messages.length - 1].content || 'Horse on a ball'
       const response = await openai.images.generate({
-        prompt,
+        prompt: prompt.toString(),
+        n: 1,
         size: '1024x1024',
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         model: 'dall-e-3',
       })
 
