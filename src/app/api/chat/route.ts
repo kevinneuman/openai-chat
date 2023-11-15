@@ -46,7 +46,12 @@ export async function POST(req: Request) {
 
       return new StreamingTextResponse(stream)
     } else if (selectedFeature === 'image generation') {
-      const prompt = messages[messages.length - 1].content || 'Horse on a ball'
+      const prompt = messages[messages.length - 1].content
+
+      if (!prompt) {
+        throw new Error(`Prompt was empty!`)
+      }
+
       const response = await openai.images.generate({
         prompt: prompt.toString(),
         n: 1,
