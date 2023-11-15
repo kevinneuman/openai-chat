@@ -1,5 +1,8 @@
 import { useState, useCallback } from 'react'
+import { FaRegImage } from 'react-icons/fa'
+import { HiOutlineDocumentSearch } from 'react-icons/hi'
 import { IoMdCheckboxOutline } from 'react-icons/io'
+import { PiChatBold } from 'react-icons/pi'
 import Modal from './Modal'
 import { useSettingsStore } from '@/zustand/settings'
 
@@ -31,6 +34,7 @@ type CheckboxProps = {
   feature: string
   selectedFeature: string | null
   onSelectFeature: (feature: string) => void
+  disabled?: boolean
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -38,6 +42,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   feature,
   selectedFeature,
   onSelectFeature,
+  disabled = false,
 }) => {
   return (
     <div className="flex justify-center items-center">
@@ -47,6 +52,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         className="w-4 h-4 bg-gray-100 border-gray-300 rounded"
         checked={selectedFeature === feature}
         onChange={() => onSelectFeature(feature)}
+        disabled={disabled}
       />
       <label htmlFor={`checkbox-${feature}`} className="ms-2 text-sm font-medium text-gray-200">
         {label}
@@ -81,15 +87,29 @@ export default function GizmoPanel() {
     [updateUseChat, updateUseImageGeneration, updateUseDocumentQuery],
   )
 
+  const getSelectedFeatureIcon = () => {
+    switch (selectedFeature) {
+      case featureTypes.chat:
+        return <PiChatBold />
+      case featureTypes.imageGeneration:
+        return <FaRegImage />
+      case featureTypes.documentQuery:
+        return <HiOutlineDocumentSearch />
+    }
+  }
+
   return (
     <>
       <button
         aria-label="Features"
-        className="flex gap-2 items-center p-4 rounded font-medium text-xl bg-gray-800 active:text-green-200"
+        className="flex items-center justify-between p-4 rounded font-medium text-xl bg-gray-800 active:text-green-200"
         onClick={() => setModalOpen(true)}
       >
-        <IoMdCheckboxOutline />
-        <p className="text-sm">Features</p>
+        <div className="flex gap-2">
+          <IoMdCheckboxOutline />
+          <p className="text-sm">Features</p>
+        </div>
+        <div className="text-green-500">{getSelectedFeatureIcon()}</div>
       </button>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <div className="flex flex-col items-start gap-2">
@@ -100,6 +120,7 @@ export default function GizmoPanel() {
               feature={feature}
               selectedFeature={selectedFeature}
               onSelectFeature={handleSelectFeature}
+              disabled={feature === featureTypes.documentQuery}
             />
           ))}
         </div>

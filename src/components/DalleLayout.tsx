@@ -1,4 +1,5 @@
 import type { Message } from 'ai/react'
+import { add, format } from 'date-fns'
 import Image from 'next/image'
 import React, { useState, useMemo, useEffect } from 'react'
 import CommonLayout from './CommonLayout'
@@ -42,21 +43,26 @@ export default function DalleLayout({ message }: DalleLayoutProps) {
     )
   }
 
+  const createdAtUnix = new Date(dalleResponse.created * 1000)
+  const createdAtUnixPlusOneHour = add(createdAtUnix, { hours: 1 })
+
+  const formattedLastPossibleDownloadDateTime = format(createdAtUnixPlusOneHour, 'dd-MM-yyyy HH:mm')
+
   return (
     <CommonLayout isBotMessage={isBot}>
       {imageStatus === 'loaded' ? (
         <>
           <div>{dalleResponse.data[0].revised_prompt}</div>
-
+          <div className="text-sm text-red-500">{`Image visible until: ${formattedLastPossibleDownloadDateTime}`}</div>
           <Image
             src={dalleResponse.data[0].url}
             alt="Dalle generated image"
-            width={500}
-            height={500}
+            width={640}
+            height={640}
           />
         </>
       ) : (
-        <div>... image coming ...</div>
+        <div>Ready soon...</div>
       )}
     </CommonLayout>
   )

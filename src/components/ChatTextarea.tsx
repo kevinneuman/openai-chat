@@ -8,6 +8,7 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from 'react'
+import { useSettingsStore } from '@/zustand/settings'
 
 type Props = {
   selectedChatId?: number
@@ -23,6 +24,9 @@ export default function ChatTextarea({ selectedChatId, input, onChange, onSendMe
   const ref = useRef<HTMLTextAreaElement>(null)
   const [overflow, setOverflow] = useState('overflow-hidden')
   const [rows, setRows] = useState(1)
+
+  const useImageGeneration = useSettingsStore((state) => state.useImageGeneration)
+  const useDocumentQuery = useSettingsStore((state) => state.useDocumentQuery)
 
   useEffect(() => {
     const textarea = ref.current
@@ -61,13 +65,23 @@ export default function ChatTextarea({ selectedChatId, input, onChange, onSendMe
     }
   }
 
+  let placeholderText
+
+  if (useDocumentQuery) {
+    placeholderText = 'Query documents'
+  } else if (useImageGeneration) {
+    placeholderText = 'Create image'
+  } else {
+    placeholderText = 'Ask a question'
+  }
+
   return (
     <textarea
       className={`flex flex-1 p-4 max-h-96 rounded outline-none resize-none bg-gray-900 leading-8 ${overflow}`}
       id="chat-textarea"
       ref={ref}
       autoFocus
-      placeholder="Send a message"
+      placeholder={placeholderText}
       value={input}
       rows={rows}
       onChange={onChange}
