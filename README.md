@@ -1,4 +1,4 @@
-# <img alt="Logo" src="https://github.com/kevinneuman/openai-chat/blob/main/src/app/icon.png" style="width: 16px; height: auto;"> openai-chat
+# <img alt="Logo" src="https://github.com/kevinneuman/openai-chat/blob/main/public/icons/logo16.png" style="width: 16px; height: auto;"> openai-chat
 
 A cost-effective, mobile-first chat UI, designed with OpenAI API, Next.js, and Tailwind CSS, uses credits for a cheaper alternative to costly subscriptions.
 

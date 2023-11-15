@@ -5,6 +5,7 @@ import { useEffect, useState, type FormEvent, type MouseEvent } from 'react'
 import { PiPaperPlaneRightFill } from 'react-icons/pi'
 import ChatMessages from './ChatMessages'
 import ChatTextarea from './ChatTextarea'
+import { getSelectedFeature } from './GizmoPanel'
 import { useChatStore } from '@/zustand/chats'
 import { useModelStore } from '@/zustand/models'
 import { useSettingsStore } from '@/zustand/settings'
@@ -19,7 +20,9 @@ export default function Chat() {
   const selectedModel = models.find((model) => model.isSelected)
   const role = useSettingsStore((state) => state.role)
   const apiKey = useSettingsStore((state) => state.apiKey)
-  const { setStopFunction, clearStopFunction } = useUtilsStore()
+  const setStopFunction = useUtilsStore((state) => state.setStopFunction)
+  const clearStopFunction = useUtilsStore((state) => state.clearStopFunction)
+
   const {
     error,
     handleInputChange,
@@ -34,8 +37,13 @@ export default function Chat() {
     initialInput: selectedChat?.input,
     initialMessages: selectedChat?.messages,
   })
+
   const [selectedChatId, setSelectedChatId] = useState<number | undefined>(selectedChat?.id)
   const [lastValidInput, setLastValidInput] = useState(input)
+
+  const chatFeatureSelected = useSettingsStore((state) => state.useChat)
+  const imageGeneratorFeatureSelected = useSettingsStore((state) => state.useImageGeneration)
+  const documentQueryFeatureSelected = useSettingsStore((state) => state.useDocumentQuery)
 
   useEffect(() => {
     if (stop) {
@@ -71,7 +79,16 @@ export default function Chat() {
 
     handleSubmit(event, {
       options: {
-        body: { model: selectedModel?.name, role, apiKey },
+        body: {
+          model: selectedModel?.name,
+          role,
+          apiKey,
+          selectedFeature: getSelectedFeature(
+            chatFeatureSelected,
+            imageGeneratorFeatureSelected,
+            documentQueryFeatureSelected,
+          ),
+        },
       },
     })
   }

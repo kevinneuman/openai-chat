@@ -4,6 +4,7 @@ import type { Message } from 'ai/react'
 import { useEffect, useRef, useState } from 'react'
 import { PiStopFill } from 'react-icons/pi'
 import ChatMessage from './ChatMessage'
+import LoadingChatMessage from './LoadingChatMessage'
 
 type Props = {
   error?: Error
@@ -15,7 +16,17 @@ type Props = {
 export default function ChatMessages({ isLoading, messages, stop, error }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true)
-  const errorMessage = error && JSON.parse(error.message).message
+
+  let errorMessage = ''
+  if (error) {
+    try {
+      const errorObject = JSON.parse(error.message)
+      errorMessage = errorObject.message
+    } catch (e) {
+      errorMessage = 'An unexpected error has occurred'
+    }
+  }
+
   const justify = messages.length === 0 ? 'justify-center' : 'justify-start'
 
   useEffect(() => {
@@ -46,12 +57,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
         <ChatMessage key={message.id} message={message} />
       ))}
 
-      {shouldShowBotLoadingMessage && (
-        <ChatMessage
-          key={'bot-message-loading'}
-          message={{ id: 'bot-message-loading', content: '...', role: 'assistant' }}
-        />
-      )}
+      {shouldShowBotLoadingMessage && <LoadingChatMessage />}
 
       {!isLoading && !errorMessage && messages.length === 0 && (
         <p className="text-gray-400">No messages</p>
