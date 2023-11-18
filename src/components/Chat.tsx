@@ -6,6 +6,8 @@ import { PiPaperPlaneRightFill } from 'react-icons/pi'
 import ChatMessages from './ChatMessages'
 import ChatTextarea from './ChatTextarea'
 import { getSelectedFeature } from './GizmoPanel'
+import UploadImageInput from './UploadImageInput'
+import { convertToBase64 } from '@/utils/helpers'
 import { useChatStore } from '@/zustand/chats'
 import { useModelStore } from '@/zustand/models'
 import { useSettingsStore } from '@/zustand/settings'
@@ -36,10 +38,12 @@ export default function Chat() {
   } = useChat({
     initialInput: selectedChat?.input,
     initialMessages: selectedChat?.messages,
+    onFinish: () => handleStreamFinish(),
   })
 
   const [selectedChatId, setSelectedChatId] = useState<number | undefined>(selectedChat?.id)
   const [lastValidInput, setLastValidInput] = useState(input)
+  const [file, setFile] = useState<File | undefined>(undefined)
 
   const chatFeatureSelected = useSettingsStore((state) => state.useChat)
   const imageGeneratorFeatureSelected = useSettingsStore((state) => state.useImageGeneration)
@@ -74,8 +78,14 @@ export default function Chat() {
     }
   }, [error, lastValidInput, setInput])
 
-  const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = async (event: FormEvent<HTMLFormElement>) => {
     setLastValidInput(input)
+
+    const selectedFeature = getSelectedFeature(
+      chatFeatureSelected,
+      imageGeneratorFeatureSelected,
+      documentQueryFeatureSelected,
+    )
 
     handleSubmit(event, {
       options: {
@@ -83,11 +93,8 @@ export default function Chat() {
           model: selectedModel?.name,
           role,
           apiKey,
-          selectedFeature: getSelectedFeature(
-            chatFeatureSelected,
-            imageGeneratorFeatureSelected,
-            documentQueryFeatureSelected,
-          ),
+          selectedFeature,
+          file: file ? await convertToBase64(file) : undefined,
         },
       },
     })
@@ -95,6 +102,14 @@ export default function Chat() {
 
   const handleSendMessageClick = (event: MouseEvent<HTMLButtonElement>) => {
     handleSendMessage(event as unknown as FormEvent<HTMLFormElement>)
+  }
+
+  const handleFileChange = (file?: File) => {
+    setFile(file)
+  }
+
+  const handleStreamFinish = () => {
+    setFile(undefined)
   }
 
   return (
@@ -107,7 +122,9 @@ export default function Chat() {
           input={input}
           onChange={handleInputChange}
           onSendMessage={handleSendMessage}
+          file={file}
         />
+        <UploadImageInput onImageChange={handleFileChange} file={file} />
         <button
           aria-label="send message"
           className="flex items-center justify-center p-4 rounded bg-green-500"

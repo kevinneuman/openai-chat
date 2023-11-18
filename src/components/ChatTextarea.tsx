@@ -15,12 +15,19 @@ type Props = {
   input: string
   onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void
   onSendMessage: (event: FormEvent<HTMLFormElement>) => void
+  file?: File
 }
 
 const lineHeight = 32
 const maxHeight = 384
 
-export default function ChatTextarea({ selectedChatId, input, onChange, onSendMessage }: Props) {
+export default function ChatTextarea({
+  selectedChatId,
+  input,
+  onChange,
+  onSendMessage,
+  file,
+}: Props) {
   const ref = useRef<HTMLTextAreaElement>(null)
   const [overflow, setOverflow] = useState('overflow-hidden')
   const [rows, setRows] = useState(1)
@@ -70,7 +77,11 @@ export default function ChatTextarea({ selectedChatId, input, onChange, onSendMe
   if (useDocumentQuery) {
     placeholderText = 'Query documents'
   } else if (useImageGeneration) {
-    placeholderText = 'Create image'
+    if (file) {
+      placeholderText = 'Edit image'
+    } else {
+      placeholderText = 'Create image'
+    }
   } else {
     placeholderText = 'Ask a question'
   }

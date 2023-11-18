@@ -2,6 +2,7 @@ import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs'
+import { base64ToFile } from '@/utils/helpers'
 
 const openai = new OpenAI()
 
@@ -15,12 +16,14 @@ export async function POST(req: Request) {
       role,
       apiKey,
       selectedFeature,
+      file,
     }: {
       messages: ChatCompletionMessageParam[]
       model: string
       role: string
       apiKey: string
       selectedFeature: string
+      file?: string
     } = await req.json()
 
     if (apiKey) {
@@ -52,14 +55,25 @@ export async function POST(req: Request) {
         throw new Error(`Prompt was empty!`)
       }
 
-      const response = await openai.images.generate({
-        prompt: prompt.toString(),
-        n: 1,
-        size: '1024x1024',
-        model: 'dall-e-3',
-      })
+      if (file) {
+        const response = await openai.images.createVariation({
+          image: await base64ToFile(file, `image-${Date.now()}.png`),
+          n: 1,
+          size: '1024x1024',
+          model: 'dall-e-2',
+        })
 
-      return NextResponse.json(response)
+        return NextResponse.json(response)
+      } else {
+        const response = await openai.images.generate({
+          prompt: prompt.toString(),
+          n: 1,
+          size: '1024x1024',
+          model: 'dall-e-3',
+        })
+
+        return NextResponse.json(response)
+      }
     } else {
       throw new Error(`Unsupported selected feature: ${selectedFeature}`)
     }

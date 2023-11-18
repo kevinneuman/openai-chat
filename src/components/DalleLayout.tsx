@@ -57,12 +57,12 @@ export default function DalleLayout({ message }: DalleLayoutProps) {
           <Image
             src={dalleResponse.data[0].url}
             alt="Dalle generated image"
-            width={640}
-            height={640}
+            width={1024}
+            height={1024}
           />
         </>
       ) : (
-        <div>Ready soon...</div>
+        <div>Fetching image now...</div>
       )}
     </CommonLayout>
   )
