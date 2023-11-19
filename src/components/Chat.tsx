@@ -106,6 +106,7 @@ export default function Chat() {
 
   const handleFileChange = (file?: File) => {
     setFile(file)
+    setInput('Generate variation of the provided image')
   }
 
   const handleStreamFinish = () => {
