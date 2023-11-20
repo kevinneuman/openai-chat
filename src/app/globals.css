@@ -21,3 +21,15 @@ body {
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb)))
     rgb(var(--background-start-rgb));
 }
+
+::-webkit-scrollbar {
+  @apply w-2.5 bg-gray-900 rounded-full;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-900 rounded-full shadow-inner;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-700 rounded-full;
+}
