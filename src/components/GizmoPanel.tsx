@@ -120,7 +120,6 @@ export default function GizmoPanel() {
               feature={feature}
               selectedFeature={selectedFeature}
               onSelectFeature={handleSelectFeature}
-              disabled={feature === featureTypes.documentQuery}
             />
           ))}
         </div>

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { MODELS } from '@/utils/constants'
 
 type Model = {
   name: string
@@ -15,8 +16,8 @@ export const useModelStore = create<ModelsState>()(
   persist(
     (set, get) => ({
       models: [
-        { name: 'gpt-3.5-turbo-1106', isSelected: true },
-        { name: 'gpt-4-1106-preview', isSelected: false },
+        { name: MODELS.gpt3, isSelected: true },
+        { name: MODELS.gpt4, isSelected: false },
       ],
       updateModelSelection: (modelName) =>
         set({

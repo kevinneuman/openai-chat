@@ -21,3 +21,5 @@ export const base64ToFile = async (base64: string, filename: string): Promise<Fi
   const blob = await response.blob()
   return new File([blob], filename, { type: blob.type })
 }
+
+export const getFilenameFromPathname = (pathname: string) => pathname.split(/_(.+)/)[1]
