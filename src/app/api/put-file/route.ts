@@ -6,6 +6,7 @@ export const runtime = 'edge'
 export async function POST(req: Request) {
   const form = await req.formData()
   const userId = form.get('userId')
+  const blobToken = form.get('blobToken')
   const files = form.getAll('files')
   const fileNames = form.getAll('fileNames')
 
@@ -17,21 +18,29 @@ export async function POST(req: Request) {
     throw new Error(`Files were empty!`)
   }
 
-  const blobs = []
+  try {
+    const token = blobToken?.toString() ?? process.env.BLOB_READ_WRITE_TOKEN
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i]
-    const fileName = fileNames[i]
+    const blobs = []
 
-    const contentType = req.headers.get('content-type') || 'text/plain'
-    const filename = `${userId}_${fileName}`
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      const fileName = fileNames[i]
 
-    const blob = await put(filename, file, {
-      contentType,
-      access: 'public',
-    })
-    blobs.push(blob)
+      const contentType = req.headers.get('content-type') || 'text/plain'
+      const filename = `${userId}_${fileName}`
+
+      const blob = await put(filename, file, {
+        token,
+        contentType,
+        access: 'public',
+      })
+      blobs.push(blob)
+    }
+
+    return NextResponse.json(blobs)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 401 })
   }
-
-  return NextResponse.json(blobs)
 }

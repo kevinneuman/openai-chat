@@ -8,6 +8,8 @@ type SettingsState = {
   updateRole: (newRole: string) => void
   apiKey: string
   updateApiKey: (newApiKey: string) => void
+  blobToken: string
+  updateBlobToken: (newBlobToken: string) => void
   useChat: boolean
   updateUseChat: (newVal: boolean) => void
   useImageGeneration: boolean
@@ -24,6 +26,8 @@ export const useSettingsStore = create<SettingsState>()(
       updateRole: (newRole) => set({ role: newRole }),
       apiKey: '',
       updateApiKey: (newApiKey) => set({ apiKey: newApiKey }),
+      blobToken: '',
+      updateBlobToken: (newBlobToken) => set({ blobToken: newBlobToken }),
       useChat: true,
       updateUseChat: (newVal) => set({ useChat: newVal }),
       useImageGeneration: false,

@@ -3,6 +3,8 @@ import type { ChangeEvent, FC } from 'react'
 import React, { useRef, useState } from 'react'
 import { AiOutlineLoading } from 'react-icons/ai'
 import { FaFileUpload } from 'react-icons/fa'
+import { useToast } from '@/hooks/useToast'
+import { getMessageFromResponse } from '@/utils/helpers'
 import { useFilesStore } from '@/zustand/files'
 import { useSettingsStore } from '@/zustand/settings'
 
@@ -14,6 +16,9 @@ const UploadDocumentsInput: FC<UploadDocumentsInputProps> = () => {
   const [uploading, setUploading] = useState(false)
   const userId = useSettingsStore((state) => state.userId)
   const addDocuments = useFilesStore((state) => state.addDocuments)
+  const blobToken = useSettingsStore((state) => state.blobToken)
+
+  const { toastError } = useToast()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -33,20 +38,26 @@ const UploadDocumentsInput: FC<UploadDocumentsInputProps> = () => {
       for (let i = 0; i < files.length; i++) {
         formData.append('files', files[i])
         formData.append('fileNames', files[i].name)
+        formData.append('blobToken', blobToken)
       }
 
       try {
-        const response = await fetch('/api/put-file', {
+        const resp = await fetch('/api/put-file', {
           method: 'POST',
           body: formData,
         })
 
-        const uploadedFilesResult: PutBlobResult[] = await response.json()
+        if (!resp.ok) {
+          throw await getMessageFromResponse(resp)
+        }
+
+        const uploadedFilesResult: PutBlobResult[] = await resp.json()
 
         addDocuments(uploadedFilesResult)
         setUploading(false)
-      } catch (error) {
-        console.error('Error uploading files:', error)
+      } catch (e) {
+        console.error(e)
+        toastError(e as string)
         setUploading(false)
       }
     }

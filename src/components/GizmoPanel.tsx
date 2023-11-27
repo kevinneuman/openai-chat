@@ -15,7 +15,7 @@ type FeatureTypes = {
 const featureTypes: FeatureTypes = {
   chat: 'chat',
   imageGeneration: 'image generation',
-  documentQuery: 'document query',
+  documentQuery: 'document query (RAG)',
 }
 
 export const getSelectedFeature = (
