@@ -61,15 +61,14 @@ export default function ChatTextarea({
   }, [input])
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (
-      event.key === 'Enter' &&
-      !event.shiftKey &&
-      !event.altKey &&
-      !event.ctrlKey &&
-      !event.metaKey
-    ) {
+    if (event.key === 'Enter') {
+      if (event.shiftKey || /Mobi|Android/i.test(navigator.userAgent)) {
+        return
+      }
+
       event.preventDefault()
       onSendMessage(event as unknown as FormEvent<HTMLFormElement>)
+      return
     }
   }
 
