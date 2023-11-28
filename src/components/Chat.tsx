@@ -9,7 +9,7 @@ import ChatTextarea from './ChatTextarea'
 import { getSelectedFeature } from './GizmoPanel'
 import UploadDocumentsInput from './UploadDocumentsInput'
 import UploadImageInput from './UploadImageInput'
-import { convertToBase64 } from '@/utils/helpers'
+import { convertToBase64, getMessageFromResponse } from '@/utils/helpers'
 import { useChatStore } from '@/zustand/chats'
 import { useFilesStore } from '@/zustand/files'
 import { useModelStore } from '@/zustand/models'
@@ -127,40 +127,48 @@ export default function Chat() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ fileURLs, messages: messagesWithUserQuestion }),
-        }).then((response) => {
-          if (!response.body) {
-            throw new Error('Response body missing!')
-          }
-          const reader = response.body.getReader()
-          const decoder = new TextDecoder()
-
-          const chatId = (messages.length + 1).toString()
-
-          const prevMessage: Message = { id: chatId, content: '', role: 'assistant' }
-
-          function read() {
-            reader
-              .read()
-              .then(({ done, value }) => {
-                if (done) {
-                  setDocumentQueryLoading(false)
-                  return
-                }
-                const textChunk = decoder.decode(value, { stream: true })
-
-                prevMessage.content += textChunk
-                setMessages([...messagesWithUserQuestion, prevMessage])
-
-                read()
-              })
-              .catch((error) => {
-                setDocumentQueryLoading(false)
-                console.error('Error while reading the stream', error)
-              })
-          }
-
-          read()
         })
+          .then(async (response) => {
+            if (!response.ok) {
+              throw await getMessageFromResponse(response)
+            }
+
+            if (!response.body) {
+              throw new Error('Response body missing!')
+            }
+            const reader = response.body.getReader()
+            const decoder = new TextDecoder()
+
+            const chatId = (messages.length + 1).toString()
+
+            const prevMessage: Message = { id: chatId, content: '', role: 'assistant' }
+
+            function read() {
+              reader
+                .read()
+                .then(({ done, value }) => {
+                  if (done) {
+                    setDocumentQueryLoading(false)
+                    return
+                  }
+                  const textChunk = decoder.decode(value, { stream: true })
+
+                  prevMessage.content += textChunk
+                  setMessages([...messagesWithUserQuestion, prevMessage])
+
+                  read()
+                })
+                .catch((error) => {
+                  setDocumentQueryLoading(false)
+                  throw error
+                })
+            }
+
+            read()
+          })
+          .catch((err) => {
+            console.error('Error while reading the stream', err)
+          })
       } else {
         throw new Error('Unknown feature selected')
       }

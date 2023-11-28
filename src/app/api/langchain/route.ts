@@ -2,7 +2,9 @@ import { StreamingTextResponse } from 'ai'
 import type { Message, Message as VercelChatMessage } from 'ai'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
 import type { Document } from 'langchain/document'
+import { CSVLoader } from 'langchain/document_loaders/fs/csv'
 import { JSONLoader } from 'langchain/document_loaders/fs/json'
+import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { PromptTemplate } from 'langchain/prompts'
@@ -95,6 +97,46 @@ const getJsonFileDocuments = async (fileURLs: string[]): Promise<Document[]> => 
   return jsonDocuments
 }
 
+const getPdfFileDocuments = async (fileURLs: string[]): Promise<Document[]> => {
+  const pdfFileBuffers: Buffer[] = []
+  const pdfFileURLs = fileURLs.filter((url) => url.toLowerCase().endsWith('.pdf'))
+
+  for (const fileURL of pdfFileURLs) {
+    const response = await fetch(fileURL)
+    if (!response.ok) {
+      throw new Error(`Network response was not ok for file: ${fileURL}`)
+    }
+    const arrayBuffer = await response.arrayBuffer()
+    const fileAsBuffer = Buffer.from(arrayBuffer)
+    pdfFileBuffers.push(fileAsBuffer)
+  }
+
+  const blob = new Blob(pdfFileBuffers, { type: 'application/pdf' })
+  const pdfLoader = new PDFLoader(blob)
+  const pdfDocuments = await pdfLoader.load()
+  return pdfDocuments
+}
+
+const getCsvFileDocuments = async (fileURLs: string[]): Promise<Document[]> => {
+  const csvFileBuffers: Buffer[] = []
+  const csvFileURLs = fileURLs.filter((url) => url.toLowerCase().endsWith('.csv'))
+
+  for (const fileURL of csvFileURLs) {
+    const response = await fetch(fileURL)
+    if (!response.ok) {
+      throw new Error(`Network response was not ok for file: ${fileURL}`)
+    }
+    const arrayBuffer = await response.arrayBuffer()
+    const fileAsBuffer = Buffer.from(arrayBuffer)
+    csvFileBuffers.push(fileAsBuffer)
+  }
+
+  const blob = new Blob(csvFileBuffers, { type: 'text/csv' })
+  const csvLoader = new CSVLoader(blob)
+  const csvDocuments = await csvLoader.load()
+  return csvDocuments
+}
+
 // Source: https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/retrieval/page.tsx
 export async function POST(req: NextRequest) {
   try {
@@ -118,9 +160,11 @@ export async function POST(req: NextRequest) {
 
     const txtFileDocuments = await getTxtFileDocuments(fileURLs)
     const jsonFileDocuments = await getJsonFileDocuments(fileURLs)
+    const pdfFileDocuments = await getPdfFileDocuments(fileURLs)
+    const csvFileDocuments = await getCsvFileDocuments(fileURLs)
 
     const vectorStore = await MemoryVectorStore.fromDocuments(
-      [...txtFileDocuments, ...jsonFileDocuments],
+      [...txtFileDocuments, ...jsonFileDocuments, ...pdfFileDocuments, ...csvFileDocuments],
       embeddings,
     )
 
