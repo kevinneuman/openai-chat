@@ -9,6 +9,7 @@ import ChatTextarea from './ChatTextarea'
 import { getSelectedFeature } from './GizmoPanel'
 import UploadDocumentsInput from './UploadDocumentsInput'
 import UploadImageInput from './UploadImageInput'
+import { useToast } from '@/hooks/useToast'
 import { convertToBase64, getMessageFromResponse } from '@/utils/helpers'
 import { useChatStore } from '@/zustand/chats'
 import { useFilesStore } from '@/zustand/files'
@@ -53,6 +54,8 @@ export default function Chat() {
   const chatFeatureSelected = useSettingsStore((state) => state.useChat)
   const imageGeneratorFeatureSelected = useSettingsStore((state) => state.useImageGeneration)
   const documentQueryFeatureSelected = useSettingsStore((state) => state.useDocumentQuery)
+
+  const { toastError } = useToast()
 
   useEffect(() => {
     if (stop) {
@@ -158,16 +161,18 @@ export default function Chat() {
 
                   read()
                 })
-                .catch((error) => {
+                .catch((err) => {
                   setDocumentQueryLoading(false)
-                  throw error
+                  throw err
                 })
             }
 
             read()
           })
-          .catch((err) => {
-            console.error('Error while reading the stream', err)
+          .catch((e) => {
+            setDocumentQueryLoading(false)
+            console.error(e)
+            toastError(e as string)
           })
       } else {
         throw new Error('Unknown feature selected')
