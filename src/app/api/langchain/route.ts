@@ -2,6 +2,7 @@ import { StreamingTextResponse } from 'ai'
 import type { Message, Message as VercelChatMessage } from 'ai'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
 import type { Document } from 'langchain/document'
+import { JSONLoader } from 'langchain/document_loaders/fs/json'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { PromptTemplate } from 'langchain/prompts'
@@ -54,6 +55,46 @@ Question: {question}
 `
 const answerPrompt = PromptTemplate.fromTemplate(ANSWER_TEMPLATE)
 
+const getTxtFileDocuments = async (fileURLs: string[]): Promise<Document[]> => {
+  const txtFileBuffers: Buffer[] = []
+  const txtFileURLs = fileURLs.filter((url) => url.toLowerCase().endsWith('.txt'))
+
+  for (const fileURL of txtFileURLs) {
+    const response = await fetch(fileURL)
+    if (!response.ok) {
+      throw new Error(`Network response was not ok for file: ${fileURL}`)
+    }
+    const arrayBuffer = await response.arrayBuffer()
+    const fileAsBuffer = Buffer.from(arrayBuffer)
+    txtFileBuffers.push(fileAsBuffer)
+  }
+
+  const blob = new Blob(txtFileBuffers, { type: 'text/plain' })
+  const txtLoader = new TextLoader(blob)
+  const txtDocuments = await txtLoader.load()
+  return txtDocuments
+}
+
+const getJsonFileDocuments = async (fileURLs: string[]): Promise<Document[]> => {
+  const jsonFileBuffers: Buffer[] = []
+  const jsonFileURLs = fileURLs.filter((url) => url.toLowerCase().endsWith('.json'))
+
+  for (const fileURL of jsonFileURLs) {
+    const response = await fetch(fileURL)
+    if (!response.ok) {
+      throw new Error(`Network response was not ok for file: ${fileURL}`)
+    }
+    const arrayBuffer = await response.arrayBuffer()
+    const fileAsBuffer = Buffer.from(arrayBuffer)
+    jsonFileBuffers.push(fileAsBuffer)
+  }
+
+  const blob = new Blob(jsonFileBuffers, { type: 'application/json' })
+  const jsonLoader = new JSONLoader(blob)
+  const jsonDocuments = await jsonLoader.load()
+  return jsonDocuments
+}
+
 // Source: https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/retrieval/page.tsx
 export async function POST(req: NextRequest) {
   try {
@@ -75,22 +116,13 @@ export async function POST(req: NextRequest) {
 
     const embeddings = new OpenAIEmbeddings()
 
-    const combinedBufferFromFiles: Buffer[] = []
+    const txtFileDocuments = await getTxtFileDocuments(fileURLs)
+    const jsonFileDocuments = await getJsonFileDocuments(fileURLs)
 
-    for (const fileURL of fileURLs) {
-      const fileFromUrl = await fetch(fileURL)
-      const arrayBuffer = await fileFromUrl.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
-      combinedBufferFromFiles.push(buffer)
-    }
-
-    const blob = new Blob(combinedBufferFromFiles, { type: 'text/plain' })
-
-    const loader = new TextLoader(blob)
-
-    const data = await loader.load()
-
-    const vectorStore = await MemoryVectorStore.fromDocuments(data, embeddings)
+    const vectorStore = await MemoryVectorStore.fromDocuments(
+      [...txtFileDocuments, ...jsonFileDocuments],
+      embeddings,
+    )
 
     const standaloneQuestionChain = RunnableSequence.from([
       condenseQuestionPrompt,
@@ -99,6 +131,7 @@ export async function POST(req: NextRequest) {
     ])
 
     let resolveWithDocuments: (value: Document[]) => void
+
     const documentPromise = new Promise<Document[]>((resolve) => {
       resolveWithDocuments = resolve
     })

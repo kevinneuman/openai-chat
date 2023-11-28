@@ -68,7 +68,7 @@ const UploadDocumentsInput: FC<UploadDocumentsInputProps> = () => {
       <input
         ref={inputRef}
         type="file"
-        accept=".txt"
+        accept=".txt, .json, application/json"
         multiple
         className="hidden"
         onChange={handleChange}
