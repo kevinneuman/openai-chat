@@ -57,84 +57,41 @@ Question: {question}
 `
 const answerPrompt = PromptTemplate.fromTemplate(ANSWER_TEMPLATE)
 
-const getTxtFileDocuments = async (fileURLs: string[]): Promise<Document[]> => {
-  const txtFileBuffers: Buffer[] = []
-  const txtFileURLs = fileURLs.filter((url) => url.toLowerCase().endsWith('.txt'))
-
-  for (const fileURL of txtFileURLs) {
-    const response = await fetch(fileURL)
-    if (!response.ok) {
-      throw new Error(`Network response was not ok for file: ${fileURL}`)
-    }
-    const arrayBuffer = await response.arrayBuffer()
-    const fileAsBuffer = Buffer.from(arrayBuffer)
-    txtFileBuffers.push(fileAsBuffer)
+const getFileDocuments = async (
+  fileURLs: string[],
+  fileType: keyof typeof mimeTypeMap,
+): Promise<Document[]> => {
+  const mimeTypeMap = {
+    txt: 'text/plain',
+    json: 'application/json',
+    pdf: 'application/pdf',
+    csv: 'text/csv',
   }
 
-  const blob = new Blob(txtFileBuffers, { type: 'text/plain' })
-  const txtLoader = new TextLoader(blob)
-  const txtDocuments = await txtLoader.load()
-  return txtDocuments
-}
+  const fileBuffers = await Promise.all(
+    fileURLs
+      .filter((url) => url.toLowerCase().endsWith(`.${fileType}`))
+      .map(async (url) => {
+        const response = await fetch(url)
+        if (!response.ok) throw new Error(`Network response was not ok for file: ${url}`)
+        return new Uint8Array(await response.arrayBuffer())
+      }),
+  )
 
-const getJsonFileDocuments = async (fileURLs: string[]): Promise<Document[]> => {
-  const jsonFileBuffers: Buffer[] = []
-  const jsonFileURLs = fileURLs.filter((url) => url.toLowerCase().endsWith('.json'))
+  const blob = new Blob(fileBuffers, { type: mimeTypeMap[fileType] })
 
-  for (const fileURL of jsonFileURLs) {
-    const response = await fetch(fileURL)
-    if (!response.ok) {
-      throw new Error(`Network response was not ok for file: ${fileURL}`)
-    }
-    const arrayBuffer = await response.arrayBuffer()
-    const fileAsBuffer = Buffer.from(arrayBuffer)
-    jsonFileBuffers.push(fileAsBuffer)
+  switch (fileType) {
+    case 'txt':
+      return new TextLoader(blob).load()
+    case 'json':
+      return new JSONLoader(blob).load()
+    case 'pdf':
+      return new PDFLoader(blob).load()
+    case 'csv':
+      return new CSVLoader(blob).load()
+    default:
+      return []
   }
-
-  const blob = new Blob(jsonFileBuffers, { type: 'application/json' })
-  const jsonLoader = new JSONLoader(blob)
-  const jsonDocuments = await jsonLoader.load()
-  return jsonDocuments
-}
-
-const getPdfFileDocuments = async (fileURLs: string[]): Promise<Document[]> => {
-  const pdfFileBuffers: Buffer[] = []
-  const pdfFileURLs = fileURLs.filter((url) => url.toLowerCase().endsWith('.pdf'))
-
-  for (const fileURL of pdfFileURLs) {
-    const response = await fetch(fileURL)
-    if (!response.ok) {
-      throw new Error(`Network response was not ok for file: ${fileURL}`)
-    }
-    const arrayBuffer = await response.arrayBuffer()
-    const fileAsBuffer = Buffer.from(arrayBuffer)
-    pdfFileBuffers.push(fileAsBuffer)
-  }
-
-  const blob = new Blob(pdfFileBuffers, { type: 'application/pdf' })
-  const pdfLoader = new PDFLoader(blob)
-  const pdfDocuments = await pdfLoader.load()
-  return pdfDocuments
-}
-
-const getCsvFileDocuments = async (fileURLs: string[]): Promise<Document[]> => {
-  const csvFileBuffers: Buffer[] = []
-  const csvFileURLs = fileURLs.filter((url) => url.toLowerCase().endsWith('.csv'))
-
-  for (const fileURL of csvFileURLs) {
-    const response = await fetch(fileURL)
-    if (!response.ok) {
-      throw new Error(`Network response was not ok for file: ${fileURL}`)
-    }
-    const arrayBuffer = await response.arrayBuffer()
-    const fileAsBuffer = Buffer.from(arrayBuffer)
-    csvFileBuffers.push(fileAsBuffer)
-  }
-
-  const blob = new Blob(csvFileBuffers, { type: 'text/csv' })
-  const csvLoader = new CSVLoader(blob)
-  const csvDocuments = await csvLoader.load()
-  return csvDocuments
 }
 
 // Source: https://github.com/langchain-ai/langchain-nextjs-template/blob/main/app/retrieval/page.tsx
@@ -158,10 +115,10 @@ export async function POST(req: NextRequest) {
 
     const embeddings = new OpenAIEmbeddings()
 
-    const txtFileDocuments = await getTxtFileDocuments(fileURLs)
-    const jsonFileDocuments = await getJsonFileDocuments(fileURLs)
-    const pdfFileDocuments = await getPdfFileDocuments(fileURLs)
-    const csvFileDocuments = await getCsvFileDocuments(fileURLs)
+    const txtFileDocuments = await getFileDocuments(fileURLs, 'txt')
+    const jsonFileDocuments = await getFileDocuments(fileURLs, 'json')
+    const pdfFileDocuments = await getFileDocuments(fileURLs, 'pdf')
+    const csvFileDocuments = await getFileDocuments(fileURLs, 'csv')
 
     const vectorStore = await MemoryVectorStore.fromDocuments(
       [...txtFileDocuments, ...jsonFileDocuments, ...pdfFileDocuments, ...csvFileDocuments],
