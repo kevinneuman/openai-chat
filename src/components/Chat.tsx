@@ -89,96 +89,92 @@ export default function Chat() {
   const handleSendMessage = async (event: FormEvent<HTMLFormElement>) => {
     setLastValidInput(input)
 
-    const selectedFeature = getSelectedFeature(
-      chatFeatureSelected,
-      imageGeneratorFeatureSelected,
-      documentQueryFeatureSelected,
-    )
+    if (chatFeatureSelected || imageGeneratorFeatureSelected) {
+      await handleChatOrImageFeature(event)
+    } else if (documentQueryFeatureSelected) {
+      await handleDocumentQueryFeature()
+    } else {
+      console.error('Unknown feature selected')
+    }
+  }
 
+  const handleChatOrImageFeature = async (event: FormEvent<HTMLFormElement>) => {
     try {
-      if (chatFeatureSelected || imageGeneratorFeatureSelected) {
-        handleSubmit(event, {
-          options: {
-            body: {
-              model: selectedModel?.name,
-              role,
-              apiKey,
-              selectedFeature,
-              file: image ? await convertToBase64(image) : undefined,
-            },
+      const selectedFeature = getSelectedFeature(
+        chatFeatureSelected,
+        imageGeneratorFeatureSelected,
+        documentQueryFeatureSelected,
+      )
+
+      handleSubmit(event, {
+        options: {
+          body: {
+            model: selectedModel?.name,
+            role,
+            apiKey,
+            selectedFeature,
+            file: image ? await convertToBase64(image) : undefined,
           },
-        })
-      } else if (documentQueryFeatureSelected) {
-        setDocumentQueryLoading(true)
+        },
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
-        const fileURLs = documents.map((doc) => doc.url)
+  const handleDocumentQueryFeature = async () => {
+    try {
+      setDocumentQueryLoading(true)
+      const fileURLs = documents.map((doc) => doc.url)
 
-        const userQuestion: Message = {
-          id: messages.length.toString(),
-          content: input,
-          role: 'user',
+      const userQuestion: Message = {
+        id: messages.length.toString(),
+        content: input,
+        role: 'user',
+      }
+
+      const messagesWithUserQuestion = [...messages, userQuestion]
+      setInput('')
+      setMessages(messagesWithUserQuestion)
+
+      const response = await fetch('/api/langchain', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileURLs, messages: messagesWithUserQuestion }),
+      })
+
+      if (!response.ok) {
+        throw await getMessageFromResponse(response)
+      }
+
+      if (!response.body) {
+        throw new Error('Response body missing!')
+      }
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+
+      const chatId = (messages.length + 1).toString()
+      const prevMessage: Message = { id: chatId, content: '', role: 'assistant' }
+
+      let reading = true
+      while (reading) {
+        const { done, value } = await reader.read()
+        if (done) {
+          reading = false
+          continue
         }
 
-        const messagesWithUserQuestion = [...messages, userQuestion]
-
-        setInput('')
-        setMessages(messagesWithUserQuestion)
-
-        await fetch('/api/langchain', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ fileURLs, messages: messagesWithUserQuestion }),
-        })
-          .then(async (response) => {
-            if (!response.ok) {
-              throw await getMessageFromResponse(response)
-            }
-
-            if (!response.body) {
-              throw new Error('Response body missing!')
-            }
-            const reader = response.body.getReader()
-            const decoder = new TextDecoder()
-
-            const chatId = (messages.length + 1).toString()
-
-            const prevMessage: Message = { id: chatId, content: '', role: 'assistant' }
-
-            function read() {
-              reader
-                .read()
-                .then(({ done, value }) => {
-                  if (done) {
-                    setDocumentQueryLoading(false)
-                    return
-                  }
-                  const textChunk = decoder.decode(value, { stream: true })
-
-                  prevMessage.content += textChunk
-                  setMessages([...messagesWithUserQuestion, prevMessage])
-
-                  read()
-                })
-                .catch((err) => {
-                  setDocumentQueryLoading(false)
-                  throw err
-                })
-            }
-
-            read()
-          })
-          .catch((e) => {
-            setDocumentQueryLoading(false)
-            console.error(e)
-            toastError(e as string)
-          })
-      } else {
-        throw new Error('Unknown feature selected')
+        prevMessage.content += decoder.decode(value, { stream: true })
+        setMessages([...messagesWithUserQuestion, prevMessage])
       }
     } catch (e) {
       console.error(e)
+      toastError(e as string)
+    } finally {
+      setDocumentQueryLoading(false)
     }
   }
 
