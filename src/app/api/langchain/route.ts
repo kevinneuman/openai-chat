@@ -82,13 +82,13 @@ const getFileDocuments = async (
 
   switch (fileType) {
     case 'txt':
-      return new TextLoader(blob).load()
+      return blob.size ? new TextLoader(blob).load() : []
     case 'json':
-      return new JSONLoader(blob).load()
+      return blob.size ? new JSONLoader(blob).load() : []
     case 'pdf':
-      return new PDFLoader(blob).load()
+      return blob.size ? new PDFLoader(blob).load() : []
     case 'csv':
-      return new CSVLoader(blob).load()
+      return blob.size ? new CSVLoader(blob).load() : []
     default:
       return []
   }
@@ -105,8 +105,6 @@ export async function POST(req: NextRequest) {
       messages: Message[]
     } = await req.json()
 
-    console.log('Debug log 1')
-
     const previousMessages = messages.slice(0, -1)
     const currentMessageContent = messages[messages.length - 1].content
 
@@ -117,14 +115,10 @@ export async function POST(req: NextRequest) {
 
     const embeddings = new OpenAIEmbeddings()
 
-    console.log('Debug log 2')
-
     const txtFileDocuments = await getFileDocuments(fileURLs, 'txt')
     const jsonFileDocuments = await getFileDocuments(fileURLs, 'json')
     const pdfFileDocuments = await getFileDocuments(fileURLs, 'pdf')
     const csvFileDocuments = await getFileDocuments(fileURLs, 'csv')
-
-    console.log('Debug log 3')
 
     const vectorStore = await MemoryVectorStore.fromDocuments(
       [...txtFileDocuments, ...jsonFileDocuments, ...pdfFileDocuments, ...csvFileDocuments],
@@ -153,8 +147,6 @@ export async function POST(req: NextRequest) {
       ],
     })
 
-    console.log('Debug log 4')
-
     const retrievalChain = retriever.pipe(combineDocumentsFn)
 
     const answerChain = RunnableSequence.from([
@@ -166,8 +158,6 @@ export async function POST(req: NextRequest) {
       answerPrompt,
       model,
     ])
-
-    console.log('Debug log 5')
 
     const conversationalRetrievalQAChain = RunnableSequence.from([
       {
@@ -183,8 +173,6 @@ export async function POST(req: NextRequest) {
       chat_history: formatVercelMessages(previousMessages),
     })
 
-    console.log('Debug log 6')
-
     const documents = await documentPromise
     const serializedSources = Buffer.from(
       JSON.stringify(
@@ -196,8 +184,6 @@ export async function POST(req: NextRequest) {
         }),
       ),
     ).toString('base64')
-
-    console.log('Debug log 7')
 
     return new StreamingTextResponse(stream, {
       headers: {
