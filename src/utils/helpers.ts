@@ -21,3 +21,15 @@ export const base64ToFile = async (base64: string, filename: string): Promise<Fi
   const blob = await response.blob()
   return new File([blob], filename, { type: blob.type })
 }
+
+export const getFilenameFromPathname = (pathname: string) => pathname.split(/_(.+)/)[1]
+
+export const getMessageFromResponse = async (response: Response): Promise<string> => {
+  const responseAsText = await response.text()
+  try {
+    const responseAsJson = JSON.parse(responseAsText)
+    return responseAsJson.error || responseAsJson.message || 'An unknown error occurred'
+  } catch {
+    return responseAsText || 'An unknown error occurred'
+  }
+}
