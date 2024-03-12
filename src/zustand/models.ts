@@ -29,7 +29,7 @@ export const useModelStore = create<ModelsState>()(
     }),
     {
       name: 'models',
-      version: 1,
+      version: 2,
     },
   ),
 )
