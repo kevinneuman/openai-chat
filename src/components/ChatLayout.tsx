@@ -22,7 +22,7 @@ export default function ChatLayout({ message }: ChatLayoutProps) {
               <>
                 {match ? (
                   <span className="flex flex-col my-2">
-                    <span className="flex items-center justify-between rounded-t-lg bg-gray-900 text-gray-200 text-xs">
+                    <span className="flex items-center justify-between rounded-t-lg bg-neutral-900 text-gray-200 text-xs">
                       <span className="p-4">{className?.split('language-')[1]}</span>
                       <CopyButton textToCopy={props.children as string} />
                     </span>

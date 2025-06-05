@@ -16,9 +16,9 @@ export default function Home() {
   }
 
   return (
-    <main className="bg-gray-950">
+    <main className="bg-neutral-950">
       <ToastContainer />
-      <div className="flex max-md:flex-col gap-2 max-w-screen-2xl h-screen m-auto p-2">
+      <div className="flex max-md:flex-col gap-2 h-screen m-auto">
         <MobileMenu />
         <DesktopMenu />
         <Chat />

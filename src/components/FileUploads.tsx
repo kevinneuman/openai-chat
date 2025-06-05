@@ -43,7 +43,7 @@ export default function FileUploads() {
   return (
     <ul className="overflow-auto flex flex-col gap-2 border border-gray-700 rounded h-3/6 p-1 text-xs">
       {documents.map((doc) => (
-        <li key={uuidv4()} className="flex items-center justify-between p-2 rounded bg-gray-600">
+        <li key={uuidv4()} className="flex items-center justify-between p-2 rounded bg-neutral-600">
           <div className="flex items-center gap-1">
             <a href={doc.url}>
               <FaFileAlt />

@@ -51,7 +51,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
 
   return (
     <div
-      className={`overflow-auto flex flex-col flex-1 gap-2 items-center ${justify} p-2 rounded-lg bg-gray-900`}
+      className={`overflow-auto flex flex-col flex-1 gap-2 items-center ${justify} md:pt-2 max-md:pl-2 pr-2`}
       ref={ref}
       onScroll={handleScroll}
     >
@@ -70,7 +70,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
           {isLoading && !useDocumentQuery && (
             <button
               aria-label="stop generate"
-              className="flex gap-2 items-center p-4 rounded bg-gray-800"
+              className="flex gap-2 items-center p-4 rounded bg-neutral-800"
               onClick={stop}
             >
               <PiStopFill />

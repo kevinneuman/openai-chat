@@ -88,7 +88,7 @@ export default function ChatTextarea({
 
   return (
     <textarea
-      className={`flex flex-1 p-4 max-h-96 rounded outline-none resize-none bg-gray-900 leading-8 ${overflow}`}
+      className={`flex flex-1 p-4 max-h-96 rounded outline-none resize-none bg-neutral-900 leading-8 ${overflow}`}
       id="chat-textarea"
       ref={ref}
       autoFocus

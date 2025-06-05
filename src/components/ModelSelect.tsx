@@ -25,7 +25,7 @@ export default function ModelSelect({ instanceId }: Props) {
       aria-label="select model"
       classNames={{
         container: () => 'w-full',
-        control: () => 'p-2 !border-none !bg-gray-800',
+        control: () => 'p-2 !border-none !bg-neutral-800',
         singleValue: () => '!text-gray-200 text-sm',
         menuList: () => 'text-gray-950 text-sm',
       }}

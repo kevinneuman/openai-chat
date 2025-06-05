@@ -53,7 +53,7 @@ export default function SettingsModal() {
     <>
       <button
         aria-label="assign role"
-        className="flex gap-2 items-center p-4 rounded bg-gray-800 active:text-green-200"
+        className="flex gap-2 items-center p-4 rounded bg-neutral-800 active:text-green-200"
         onClick={handleOpenModal}
       >
         <FaUserCog className={`text-xl ${previousRole && 'text-green-500'}`} />
@@ -70,7 +70,7 @@ export default function SettingsModal() {
             <textarea
               id="message"
               rows={4}
-              className="block p-2.5 w-full text-sm text-gray-200 bg-gray-700  rounded-lg"
+              className="block p-2.5 w-full text-sm text-gray-200 bg-neutral-700  rounded-lg"
               placeholder="e.g., Study Buddy..."
               value={role}
               onChange={handleChangeRole}
@@ -100,7 +100,7 @@ export default function SettingsModal() {
               id="api-key"
               autoComplete="off"
               placeholder="Paste API key here"
-              className="bg-gray-700 text-gray-200 sm:text-sm rounded-lg block w-full p-2.5"
+              className="bg-neutral-700 text-gray-200 sm:text-sm rounded-lg block w-full p-2.5"
               value={apiKey}
               onChange={handleChangeApiKey}
             />
@@ -130,7 +130,7 @@ export default function SettingsModal() {
               id="blob-token"
               autoComplete="off"
               placeholder="Paste Blob token here"
-              className="bg-gray-700 text-gray-200 sm:text-sm rounded-lg block w-full p-2.5"
+              className="bg-neutral-700 text-gray-200 sm:text-sm rounded-lg block w-full p-2.5"
               value={blobToken}
               onChange={handleChangeBlobToken}
             />
@@ -138,7 +138,7 @@ export default function SettingsModal() {
           <div className="flex flex-row mt-4 justify-end gap-2">
             <button
               type="button"
-              className="text-white bg-gray-800 hover:bg-gray-900 font-medium rounded-lg text-sm px-5 py-2.5"
+              className="text-white bg-neutral-800 hover:bg-neutral-900 font-medium rounded-lg text-sm px-5 py-2.5"
               onClick={handleCancel}
             >
               Cancel

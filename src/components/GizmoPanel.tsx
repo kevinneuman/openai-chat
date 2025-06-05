@@ -49,7 +49,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
       <input
         id={`checkbox-${feature}`}
         type="checkbox"
-        className="w-4 h-4 bg-gray-100 border-gray-300 rounded"
+        className="w-4 h-4 bg-neutral-100 border-gray-300 rounded"
         checked={selectedFeature === feature}
         onChange={() => onSelectFeature(feature)}
         disabled={disabled}
@@ -102,7 +102,7 @@ export default function GizmoPanel() {
     <>
       <button
         aria-label="Features"
-        className="flex items-center justify-between p-4 rounded font-medium text-xl bg-gray-800 active:text-green-200"
+        className="flex items-center justify-between p-4 rounded font-medium text-xl bg-neutral-800 active:text-green-200"
         onClick={() => setModalOpen(true)}
       >
         <div className="flex gap-2">

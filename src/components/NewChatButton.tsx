@@ -19,7 +19,7 @@ export default function NewChatButton() {
   return (
     <button
       aria-label="new chat"
-      className="flex gap-2 items-center p-4 rounded bg-gray-800 active:text-green-200"
+      className="flex gap-2 items-center p-4 rounded bg-neutral-800 active:text-green-200"
       onClick={handleClick}
     >
       <PiPlusBold />

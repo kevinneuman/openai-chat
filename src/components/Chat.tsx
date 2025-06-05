@@ -206,7 +206,7 @@ export default function Chat() {
         stop={stop}
       />
 
-      <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-900">
+      <div className="flex items-center gap-2 p-2 bg-neutral-900">
         <ChatTextarea
           selectedChatId={selectedChatId}
           input={input}

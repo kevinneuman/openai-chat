@@ -53,7 +53,7 @@ export default function DalleLayout({ message }: DalleLayoutProps) {
       {imageStatus === 'loaded' ? (
         <>
           <div>{dalleResponse.data[0].revised_prompt}</div>
-          <div className="text-sm text-red-500">{`Image visible until: ${formattedLastPossibleDownloadDateTime}`}</div>
+          <div className="text-sm text-yellow-500">{`Image visible until: ${formattedLastPossibleDownloadDateTime}`}</div>
           <Image
             src={dalleResponse.data[0].url}
             alt="Dalle generated image"

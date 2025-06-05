@@ -56,7 +56,7 @@ export default function ChatHistory() {
       {reversedChats.map((chat) => (
         <li
           key={chat.id}
-          className={`flex rounded ${chat.isSelected ? 'bg-gray-600' : 'bg-gray-800'}`}
+          className={`flex rounded ${chat.isSelected ? 'bg-neutral-600' : 'bg-neutral-800'}`}
         >
           <button
             aria-label={title(chat)}
@@ -70,7 +70,7 @@ export default function ChatHistory() {
           </button>
           <button
             aria-label="remove chat"
-            className="flex items-center p-4 rounded-r bg-gray-700 active:text-red-200"
+            className="flex items-center p-4 rounded-r bg-neutral-700 active:text-red-200"
             onClick={() => handleDelChat(chat.id)}
           >
             <PiTrashBold className="shrink-0" />
