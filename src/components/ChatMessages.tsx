@@ -51,7 +51,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
 
   return (
     <div
-      className={`overflow-auto flex flex-col flex-1 gap-2 items-center ${justify} md:pt-2 max-md:pl-2 pr-2`}
+      className={`overflow-auto flex flex-col flex-1 gap-2 items-center ${justify} md:pt-2 max-md:pl-2 max-md:pr-2 px-[5%]`}
       ref={ref}
       onScroll={handleScroll}
     >
