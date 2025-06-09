@@ -38,6 +38,7 @@ export default function ChatLayout({ message }: ChatLayoutProps) {
             )
           },
           a: (props) => <a className="text-blue-500 hover:underline" {...props} />,
+          h2: (props) => <h2 className="break-words" {...props} />,
         }}
       >
         {message.content}

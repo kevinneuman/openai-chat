@@ -1,11 +1,11 @@
 import React from 'react'
-import ChatMessage from './ChatMessage'
 
 export default function LoadingChatMessage() {
   return (
-    <ChatMessage
-      key={'bot-message-loading'}
-      message={{ id: 'bot-message-loading', content: '...', role: 'assistant' }}
-    />
+    <div className="flex flex-row self-start gap-2 py-2">
+      <div className="w-6 h-6 rounded-full bg-neutral-900 animate-pulse" />
+      <div className="w-6 h-6 rounded-full bg-neutral-800 animate-pulse" />
+      <div className="w-6 h-6 rounded-full bg-neutral-700 animate-pulse" />
+    </div>
   )
 }

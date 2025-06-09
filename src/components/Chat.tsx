@@ -220,7 +220,7 @@ export default function Chat() {
         {documentQueryFeatureSelected && <UploadDocumentsInput />}
         <button
           aria-label="send message"
-          className="flex items-center justify-center p-4 rounded bg-green-500"
+          className="flex items-center justify-center p-4 rounded-full bg-green-500"
           onClick={handleSendMessageClick}
         >
           <PiPaperPlaneRightFill className="text-xl" />
