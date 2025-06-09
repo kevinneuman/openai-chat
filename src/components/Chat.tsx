@@ -1,7 +1,7 @@
 'use client'
 
-import { useChat } from 'ai/react'
-import { useEffect, useState, type FormEvent, type MouseEvent } from 'react'
+import { useChat } from '@ai-sdk/react'
+import { useEffect, useMemo, type FormEvent, type MouseEvent } from 'react'
 import { PiPaperPlaneRightFill } from 'react-icons/pi'
 import ChatMessages from './ChatMessages'
 import ChatTextarea from './ChatTextarea'
@@ -15,75 +15,52 @@ export default function Chat() {
   const updateChatInput = useChatStore((state) => state.updateChatInput)
   const updateChatMessages = useChatStore((state) => state.updateChatMessages)
   const models = useModelStore((state) => state.models)
-  const selectedChat = chats?.find((chat) => chat.isSelected)
+  const selectedChat = useMemo(() => chats?.find((chat) => chat.isSelected), [chats])
   const selectedModel = models.find((model) => model.isSelected)
   const role = useSettingsStore((state) => state.role)
   const apiKey = useSettingsStore((state) => state.apiKey)
   const setStopFunction = useUtilsStore((state) => state.setStopFunction)
   const clearStopFunction = useUtilsStore((state) => state.clearStopFunction)
 
-  const {
-    error,
-    handleInputChange,
-    handleSubmit,
-    input,
-    isLoading,
-    messages,
-    setInput,
-    setMessages,
-    stop,
-  } = useChat({
-    initialInput: selectedChat?.input,
-    initialMessages: selectedChat?.messages,
+  const { error, handleInputChange, handleSubmit, input, status, messages, stop } = useChat({
+    id: selectedChat?.id?.toString(), // Convert to string for useChat
+    api: '/api/chat',
+    initialInput: selectedChat?.input || '',
+    initialMessages: selectedChat?.messages || [],
+    onFinish: (message) => {
+      // Update store when generation is complete
+      if (selectedChat) {
+        updateChatMessages([...messages, message])
+      }
+    },
+    body: {
+      model: selectedModel?.name,
+      role,
+      apiKey,
+    },
   })
 
-  const [selectedChatId, setSelectedChatId] = useState<number | undefined>(selectedChat?.id)
-  const [lastValidInput, setLastValidInput] = useState(input)
-
   useEffect(() => {
-    if (stop) {
-      setStopFunction(stop)
-    }
+    setStopFunction(stop)
     return () => clearStopFunction()
   }, [stop, setStopFunction, clearStopFunction])
 
-  useEffect(() => {
-    if (selectedChat && selectedChat.id !== selectedChatId) {
-      setInput(selectedChat.input)
-      setMessages(selectedChat.messages)
-      setSelectedChatId(selectedChat.id)
-    }
-  }, [selectedChat, selectedChatId, setInput, setMessages])
+  const isLoading = status === 'streaming' || status === 'submitted'
 
   useEffect(() => {
-    updateChatInput(input)
-  }, [input, updateChatInput])
+    if (!selectedChat) return
 
-  useEffect(() => {
-    updateChatMessages(messages)
-  }, [messages, updateChatMessages])
+    const timeoutId = setTimeout(() => {
+      if (input !== selectedChat.input && !isLoading) {
+        updateChatInput(input)
+      }
+    }, 300)
 
-  useEffect(() => {
-    if (error) {
-      setInput(lastValidInput)
-    }
-  }, [error, lastValidInput, setInput])
+    return () => clearTimeout(timeoutId)
+  }, [input, selectedChat, updateChatInput, isLoading])
 
-  const handleSendMessage = async (event: FormEvent<HTMLFormElement>) => {
-    try {
-      setLastValidInput(input)
-      handleSubmit(event, {
-        options: {
-          body: {
-            model: selectedModel?.name,
-            role,
-            apiKey,
-          },
-        },
-      })
-    } catch (e) {
-      console.error(e)
-    }
+  const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
+    handleSubmit(event)
   }
 
   const handleSendMessageClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -96,7 +73,7 @@ export default function Chat() {
 
       <div className="flex items-center gap-2 p-2 m-2 md:mt-0 md:ml-0 max-md:mt-0 rounded-lg bg-neutral-900">
         <ChatTextarea
-          selectedChatId={selectedChatId}
+          selectedChatId={selectedChat?.id}
           input={input}
           onChange={handleInputChange}
           onSendMessage={handleSendMessage}

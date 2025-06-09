@@ -4,7 +4,7 @@ import type { Message } from 'ai/react'
 import { useEffect, useRef, useState } from 'react'
 import { PiStopFill } from 'react-icons/pi'
 import ChatMessage from './ChatMessage'
-import LoadingChatMessage from './LoadingChatMessage'
+import ThreeDotsLoader from './ThreeDotsLoader'
 
 type Props = {
   error?: Error
@@ -22,7 +22,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
     try {
       const errorObject = JSON.parse(error.message)
       errorMessage = errorObject.message
-    } catch (e) {
+    } catch {
       errorMessage = 'An unexpected error has occurred'
     }
   }
@@ -57,11 +57,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
         <ChatMessage key={message.id} message={message} />
       ))}
 
-      {shouldShowBotLoadingMessage && <LoadingChatMessage />}
-
-      {!isLoading && !errorMessage && messages.length === 0 && (
-        <p className="text-gray-400">No messages</p>
-      )}
+      {shouldShowBotLoadingMessage && <ThreeDotsLoader />}
 
       {(isLoading || errorMessage) && (
         <div className="flex flex-col flex-1 items-center justify-end">

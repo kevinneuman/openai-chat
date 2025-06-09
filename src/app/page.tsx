@@ -1,15 +1,21 @@
 'use client'
 
+import AppLoading from '@/components/AppLoading'
 import Chat from '@/components/Chat'
 import DesktopMenu from '@/components/DesktopMenu'
 import MobileMenu from '@/components/MobileMenu'
+import { useHydration } from '@/hooks/useHydration'
 import { useChatStore } from '@/zustand/chats'
-import useStore from '@/zustand/useStore'
 
 export default function Home() {
-  const chats = useStore(useChatStore, (state) => state.chats)
+  const isHydrated = useHydration()
+  const chats = useChatStore((state) => state.chats)
 
-  if (!chats?.length) {
+  if (!isHydrated) {
+    return <AppLoading />
+  }
+
+  if (!chats.length) {
     return null
   }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function LoadingChatMessage() {
+export default function ThreeDotsLoader() {
   return (
     <div className="flex flex-row self-start gap-2 py-2">
       <div className="w-6 h-6 rounded-full bg-neutral-900 animate-pulse" />

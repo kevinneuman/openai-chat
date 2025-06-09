@@ -1,3 +1,5 @@
+'use client'
+
 import ReactSelect, { type SingleValue } from 'react-select'
 import { useModelStore } from '@/zustand/models'
 
@@ -8,6 +10,7 @@ type Props = {
 export default function ModelSelect({ instanceId }: Props) {
   const models = useModelStore((state) => state.models)
   const updateModelSelection = useModelStore((state) => state.updateModelSelection)
+
   const options = models.map((model) => ({
     value: model.name,
     label: model.name.toUpperCase(),

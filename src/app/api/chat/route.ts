@@ -1,9 +1,7 @@
-import { OpenAIStream, StreamingTextResponse } from 'ai'
+import { createOpenAI } from '@ai-sdk/openai'
+import { streamText } from 'ai'
+import type { CoreMessage } from 'ai'
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
-import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs'
-
-const openai = new OpenAI()
 
 export const runtime = 'edge'
 
@@ -15,21 +13,18 @@ export async function POST(req: Request) {
       role,
       apiKey,
     }: {
-      messages: ChatCompletionMessageParam[]
+      messages: CoreMessage[]
       model: string
       role: string
       apiKey: string
     } = await req.json()
 
-    if (apiKey) {
-      openai.apiKey = apiKey
-    } else {
-      openai.apiKey = process.env.OPENAI_API_KEY || ''
-    }
+    const openai = createOpenAI({
+      apiKey: apiKey || process.env.OPENAI_API_KEY || '',
+    })
 
-    const response = await openai.chat.completions.create({
-      model,
-      stream: true,
+    const result = streamText({
+      model: openai(model),
       messages: [
         {
           role: 'system',
@@ -39,15 +34,12 @@ export async function POST(req: Request) {
       ],
     })
 
-    const stream = OpenAIStream(response)
-
-    return new StreamingTextResponse(stream)
+    return result.toDataStreamResponse()
   } catch (error) {
-    if (error instanceof OpenAI.APIError) {
-      const { name, status, headers, message } = error
-      return NextResponse.json({ name, status, headers, message }, { status })
-    }
-
-    throw error
+    console.error('Chat API error:', error)
+    return NextResponse.json(
+      { error: 'An error occurred while processing your request.' },
+      { status: 500 },
+    )
   }
 }
