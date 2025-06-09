@@ -9,13 +9,10 @@ export default function SettingsModal() {
   const updateRole = useSettingsStore((state) => state.updateRole)
   const previousApiKey = useSettingsStore((state) => state.apiKey)
   const updateApiKey = useSettingsStore((state) => state.updateApiKey)
-  const previousBlobToken = useSettingsStore((state) => state.blobToken)
-  const updateBlobToken = useSettingsStore((state) => state.updateBlobToken)
 
   const [modalOpen, setModalOpen] = useState(false)
   const [role, setRole] = useState(previousRole)
   const [apiKey, setApiKey] = useState(previousApiKey)
-  const [blobToken, setBlobToken] = useState(previousBlobToken)
 
   const handleOpenModal = () => setModalOpen(true)
   const handleCloseModal = () => setModalOpen(false)
@@ -30,22 +27,15 @@ export default function SettingsModal() {
     setApiKey(newValue)
   }
 
-  const handleChangeBlobToken = (event: ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value
-    setBlobToken(newValue)
-  }
-
   const handleCancel = () => {
     updateRole(previousRole)
     updateApiKey(previousApiKey)
-    updateBlobToken(previousBlobToken)
     handleCloseModal()
   }
 
   const handleAccept = () => {
     updateRole(role.trim())
     updateApiKey(apiKey.trim())
-    updateBlobToken(blobToken.trim())
     handleCloseModal()
   }
 
@@ -103,36 +93,6 @@ export default function SettingsModal() {
               className="bg-neutral-700 text-gray-200 sm:text-sm rounded-lg block w-full p-2.5"
               value={apiKey}
               onChange={handleChangeApiKey}
-            />
-          </div>
-          <div>
-            <label htmlFor="blob-token" className="block mb-2 text-sm font-medium text-gray-200">
-              Vercel Blob token
-            </label>
-            <label className="block mb-2 text-xs font-medium text-gray-500">
-              Not needed if BLOB_READ_WRITE_TOKEN was provided through env. This is only needed for
-              Document query (RAG) -feature
-            </label>
-            <label className="block mb-2 text-xs font-medium text-gray-500">
-              Dont have one yet?
-              <a
-                className="ml-1 text-blue-500 hover:underline"
-                href="https://vercel.com/docs/storage/vercel-blob"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Get Blob token from Vercel
-              </a>
-            </label>
-            <input
-              type="text"
-              name="blob-token"
-              id="blob-token"
-              autoComplete="off"
-              placeholder="Paste Blob token here"
-              className="bg-neutral-700 text-gray-200 sm:text-sm rounded-lg block w-full p-2.5"
-              value={blobToken}
-              onChange={handleChangeBlobToken}
             />
           </div>
           <div className="flex flex-row mt-4 justify-end gap-2">

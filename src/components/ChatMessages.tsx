@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 import { PiStopFill } from 'react-icons/pi'
 import ChatMessage from './ChatMessage'
 import LoadingChatMessage from './LoadingChatMessage'
-import { useSettingsStore } from '@/zustand/settings'
 
 type Props = {
   error?: Error
@@ -17,7 +16,6 @@ type Props = {
 export default function ChatMessages({ isLoading, messages, stop, error }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true)
-  const useDocumentQuery = useSettingsStore((state) => state.useDocumentQuery)
 
   let errorMessage = ''
   if (error) {
@@ -67,7 +65,7 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
 
       {(isLoading || errorMessage) && (
         <div className="flex flex-col flex-1 items-center justify-end">
-          {isLoading && !useDocumentQuery && (
+          {isLoading && (
             <button
               aria-label="stop generate"
               className="flex gap-2 items-center p-4 rounded bg-neutral-800"

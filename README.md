@@ -12,14 +12,11 @@ First, create a
 
 file in the root and add [your API key](https://platform.openai.com/account/api-keys) to it
 
-Also if you plan to use document query (RAG) feature add [vercel blob storage token](https://vercel.com/docs/storage/vercel-blob)
-
 ```
 OPENAI_API_KEY=<key>
-BLOB_READ_WRITE_TOKEN=<token>
 ```
 
-_**Note:**_ API key and blob token can also be provided from UI but it's much less secure
+_**Note:**_ API key can also be provided from UI but it's much less secure
 
 Then, run the development server:
 

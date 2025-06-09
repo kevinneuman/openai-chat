@@ -2,18 +2,15 @@
 
 import { PiListBold, PiXBold } from 'react-icons/pi'
 import ChatHistory from './ChatHistory'
-import FileUploads from './FileUploads'
 import GizmoPanel from './GizmoPanel'
 import ModelSelect from './ModelSelect'
 import NewChatButton from './NewChatButton'
 import SettingsModal from './SettingsModal'
 import { useMobileMenuStore } from '@/zustand/mobileMenu'
-import { useSettingsStore } from '@/zustand/settings'
 
 export default function MobileMenu() {
   const isOpen = useMobileMenuStore((state) => state.isOpen)
   const setIsOpen = useMobileMenuStore((state) => state.setIsOpen)
-  const documentQueryFeatureSelected = useSettingsStore((state) => state.useDocumentQuery)
 
   const open = () => {
     setIsOpen(true)
@@ -41,7 +38,6 @@ export default function MobileMenu() {
         <div className="overflow-auto flex flex-col flex-1 gap-4 p-2 bg-neutral-900">
           <NewChatButton />
           <ChatHistory />
-          {documentQueryFeatureSelected && <FileUploads />}
           <hr className="h-px m-auto w-full border-0 bg-neutral-700" />
           <GizmoPanel />
         </div>

@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react'
 import { FaRegImage } from 'react-icons/fa'
-import { HiOutlineDocumentSearch } from 'react-icons/hi'
 import { IoMdCheckboxOutline } from 'react-icons/io'
 import { PiChatBold } from 'react-icons/pi'
 import Modal from './Modal'
@@ -9,23 +8,16 @@ import { useSettingsStore } from '@/zustand/settings'
 type FeatureTypes = {
   chat: string
   imageGeneration: string
-  documentQuery: string
 }
 
 const featureTypes: FeatureTypes = {
   chat: 'chat',
   imageGeneration: 'image generation',
-  documentQuery: 'document query (RAG)',
 }
 
-export const getSelectedFeature = (
-  useChat: boolean,
-  useImageGeneration: boolean,
-  useDocumentQuery: boolean,
-) => {
+export const getSelectedFeature = (useChat: boolean, useImageGeneration: boolean) => {
   if (useChat) return featureTypes.chat
   if (useImageGeneration) return featureTypes.imageGeneration
-  if (useDocumentQuery) return featureTypes.documentQuery
   return featureTypes.chat
 }
 
@@ -70,11 +62,8 @@ export default function GizmoPanel() {
   const useImageGeneration = useSettingsStore((state) => state.useImageGeneration)
   const updateUseImageGeneration = useSettingsStore((state) => state.updateUseImageGeneration)
 
-  const useDocumentQuery = useSettingsStore((state) => state.useDocumentQuery)
-  const updateUseDocumentQuery = useSettingsStore((state) => state.updateUseDocumentQuery)
-
   const [selectedFeature, setSelectedFeature] = useState<string | null>(
-    getSelectedFeature(useChat, useImageGeneration, useDocumentQuery),
+    getSelectedFeature(useChat, useImageGeneration),
   )
 
   const handleSelectFeature = useCallback(
@@ -82,9 +71,8 @@ export default function GizmoPanel() {
       setSelectedFeature(feature)
       updateUseChat(feature === featureTypes.chat)
       updateUseImageGeneration(feature === featureTypes.imageGeneration)
-      updateUseDocumentQuery(feature === featureTypes.documentQuery)
     },
-    [updateUseChat, updateUseImageGeneration, updateUseDocumentQuery],
+    [updateUseChat, updateUseImageGeneration],
   )
 
   const getSelectedFeatureIcon = () => {
@@ -93,8 +81,6 @@ export default function GizmoPanel() {
         return <PiChatBold />
       case featureTypes.imageGeneration:
         return <FaRegImage />
-      case featureTypes.documentQuery:
-        return <HiOutlineDocumentSearch />
     }
   }
 

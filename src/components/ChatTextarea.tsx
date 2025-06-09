@@ -33,7 +33,6 @@ export default function ChatTextarea({
   const [rows, setRows] = useState(1)
 
   const useImageGeneration = useSettingsStore((state) => state.useImageGeneration)
-  const useDocumentQuery = useSettingsStore((state) => state.useDocumentQuery)
 
   useEffect(() => {
     const textarea = ref.current
@@ -74,9 +73,7 @@ export default function ChatTextarea({
 
   let placeholderText
 
-  if (useDocumentQuery) {
-    placeholderText = 'Query documents'
-  } else if (useImageGeneration) {
+  if (useImageGeneration) {
     if (file) {
       placeholderText = 'Edit image'
     } else {
