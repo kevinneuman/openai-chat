@@ -38,3 +38,6 @@ next-env.d.ts
 # PWA
 **/sw.js*
 **/workbox-*
+
+# vscode
+.vscode
