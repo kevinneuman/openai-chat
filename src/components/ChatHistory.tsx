@@ -1,5 +1,4 @@
 import { PiChatBold, PiTrashBold } from 'react-icons/pi'
-import { isValidJson } from '@/utils/helpers'
 import { useChatStore, type Chat } from '@/zustand/chats'
 import { useMobileMenuStore } from '@/zustand/mobileMenu'
 import { useUtilsStore } from '@/zustand/utils'
@@ -25,13 +24,6 @@ export default function ChatHistory() {
     }
 
     if (chat.messages.length) {
-      const latestChatMessageContent = chat.messages[chat.messages.length - 1].content
-
-      if (isValidJson(latestChatMessageContent)) {
-        const dalleRevisedPrompt = JSON.parse(latestChatMessageContent).data[0].revised_prompt
-        return dalleRevisedPrompt
-      }
-
       return chat.messages[chat.messages.length - 1].content
     }
 

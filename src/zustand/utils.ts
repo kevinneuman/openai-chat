@@ -16,6 +16,7 @@ export const useUtilsStore = create<UtilsState>()(
     }),
     {
       name: 'utils',
+      version: 1,
     },
   ),
 )

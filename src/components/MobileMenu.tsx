@@ -2,7 +2,6 @@
 
 import { PiListBold, PiXBold } from 'react-icons/pi'
 import ChatHistory from './ChatHistory'
-import GizmoPanel from './GizmoPanel'
 import ModelSelect from './ModelSelect'
 import NewChatButton from './NewChatButton'
 import SettingsModal from './SettingsModal'
@@ -38,8 +37,6 @@ export default function MobileMenu() {
         <div className="overflow-auto flex flex-col flex-1 gap-4 p-2 bg-neutral-900">
           <NewChatButton />
           <ChatHistory />
-          <hr className="h-px m-auto w-full border-0 bg-neutral-700" />
-          <GizmoPanel />
         </div>
       </div>
     )

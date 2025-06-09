@@ -5,9 +5,6 @@ import { useEffect, useState, type FormEvent, type MouseEvent } from 'react'
 import { PiPaperPlaneRightFill } from 'react-icons/pi'
 import ChatMessages from './ChatMessages'
 import ChatTextarea from './ChatTextarea'
-import { getSelectedFeature } from './GizmoPanel'
-import UploadImageInput from './UploadImageInput'
-import { convertToBase64 } from '@/utils/helpers'
 import { useChatStore } from '@/zustand/chats'
 import { useModelStore } from '@/zustand/models'
 import { useSettingsStore } from '@/zustand/settings'
@@ -38,15 +35,10 @@ export default function Chat() {
   } = useChat({
     initialInput: selectedChat?.input,
     initialMessages: selectedChat?.messages,
-    onFinish: () => handleStreamFinish(),
   })
 
   const [selectedChatId, setSelectedChatId] = useState<number | undefined>(selectedChat?.id)
   const [lastValidInput, setLastValidInput] = useState(input)
-  const [image, setImage] = useState<File | undefined>(undefined)
-
-  const chatFeatureSelected = useSettingsStore((state) => state.useChat)
-  const imageGeneratorFeatureSelected = useSettingsStore((state) => state.useImageGeneration)
 
   useEffect(() => {
     if (stop) {
@@ -78,27 +70,14 @@ export default function Chat() {
   }, [error, lastValidInput, setInput])
 
   const handleSendMessage = async (event: FormEvent<HTMLFormElement>) => {
-    setLastValidInput(input)
-
-    if (chatFeatureSelected || imageGeneratorFeatureSelected) {
-      await handleChatOrImageFeature(event)
-    } else {
-      console.error('Unknown feature selected')
-    }
-  }
-
-  const handleChatOrImageFeature = async (event: FormEvent<HTMLFormElement>) => {
     try {
-      const selectedFeature = getSelectedFeature(chatFeatureSelected, imageGeneratorFeatureSelected)
-
+      setLastValidInput(input)
       handleSubmit(event, {
         options: {
           body: {
             model: selectedModel?.name,
             role,
             apiKey,
-            selectedFeature,
-            file: image ? await convertToBase64(image) : undefined,
           },
         },
       })
@@ -111,21 +90,6 @@ export default function Chat() {
     handleSendMessage(event as unknown as FormEvent<HTMLFormElement>)
   }
 
-  const handleImageChange = (file?: File) => {
-    setImage(file)
-
-    const text = 'Generate variation of the provided image'
-    if (file) {
-      setInput(text)
-    } else if (input === text) {
-      setInput('')
-    }
-  }
-
-  const handleStreamFinish = () => {
-    setImage(undefined)
-  }
-
   return (
     <div className="overflow-hidden flex flex-col flex-1 gap-2">
       <ChatMessages error={error} isLoading={isLoading} messages={messages} stop={stop} />
@@ -136,11 +100,7 @@ export default function Chat() {
           input={input}
           onChange={handleInputChange}
           onSendMessage={handleSendMessage}
-          file={image}
         />
-        {imageGeneratorFeatureSelected && (
-          <UploadImageInput onImageChange={handleImageChange} file={image} />
-        )}
         <button
           aria-label="send message"
           className="flex items-center justify-center p-4 rounded-full bg-green-500"

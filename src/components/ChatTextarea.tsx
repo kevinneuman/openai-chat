@@ -8,7 +8,6 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from 'react'
-import { useSettingsStore } from '@/zustand/settings'
 
 type Props = {
   selectedChatId?: number
@@ -21,18 +20,10 @@ type Props = {
 const lineHeight = 32
 const maxHeight = 384
 
-export default function ChatTextarea({
-  selectedChatId,
-  input,
-  onChange,
-  onSendMessage,
-  file,
-}: Props) {
+export default function ChatTextarea({ selectedChatId, input, onChange, onSendMessage }: Props) {
   const ref = useRef<HTMLTextAreaElement>(null)
   const [overflow, setOverflow] = useState('overflow-hidden')
   const [rows, setRows] = useState(1)
-
-  const useImageGeneration = useSettingsStore((state) => state.useImageGeneration)
 
   useEffect(() => {
     const textarea = ref.current
@@ -71,25 +62,13 @@ export default function ChatTextarea({
     }
   }
 
-  let placeholderText
-
-  if (useImageGeneration) {
-    if (file) {
-      placeholderText = 'Edit image'
-    } else {
-      placeholderText = 'Create image'
-    }
-  } else {
-    placeholderText = 'Ask a question'
-  }
-
   return (
     <textarea
       className={`flex flex-1 p-4 max-h-96 rounded outline-none resize-none bg-neutral-900 leading-8 ${overflow}`}
       id="chat-textarea"
       ref={ref}
       autoFocus
-      placeholder={placeholderText}
+      placeholder="Type your prompt…"
       value={input}
       rows={rows}
       onChange={onChange}

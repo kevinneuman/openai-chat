@@ -63,6 +63,7 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: 'chats',
+      version: 1,
     },
   ),
 )
