@@ -18,7 +18,6 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'settings',
-      version: 3,
     },
   ),
 )
