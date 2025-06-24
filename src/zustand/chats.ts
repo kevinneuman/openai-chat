@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export type Chat = {
-  id: number
+  id: string
   input: string
   messages: Message[]
   isSelected: boolean
@@ -13,13 +13,13 @@ type ChatState = {
   chats: Chat[]
   updateChatInput: (input: string) => void
   updateChatMessages: (messages: Message[]) => void
-  updateChatSelection: (chatId: number) => void
+  updateChatSelection: (chatId: string) => void
   addChat: (chat: Chat) => void
-  delChat: (chatId: number) => void
+  delChat: (chatId: string) => void
 }
 
 export const createChat = (): Chat => ({
-  id: new Date().getTime(),
+  id: Date.now().toString(),
   input: '',
   messages: [],
   isSelected: true,

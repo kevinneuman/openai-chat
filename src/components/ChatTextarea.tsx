@@ -10,7 +10,7 @@ import {
 } from 'react'
 
 type Props = {
-  selectedChatId?: number
+  selectedChatId?: string
   input: string
   onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void
   onSendMessage: (event: FormEvent<HTMLFormElement>) => void

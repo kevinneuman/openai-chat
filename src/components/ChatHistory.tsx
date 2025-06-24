@@ -34,7 +34,7 @@ export default function ChatHistory() {
     return 'Empty Chat'
   }
 
-  const handleDelChat = (chatId: number) => {
+  const handleDelChat = (chatId: string) => {
     if (stopFunction) {
       stopFunction()
     }

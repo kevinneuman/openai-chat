@@ -1,7 +1,8 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { useEffect, useMemo, type FormEvent, type MouseEvent } from 'react'
+import type { ChangeEvent, FormEvent, MouseEvent } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { PiPaperPlaneRightFill } from 'react-icons/pi'
 import ChatMessages from './ChatMessages'
 import ChatTextarea from './ChatTextarea'
@@ -15,49 +16,62 @@ export default function Chat() {
   const updateChatInput = useChatStore((state) => state.updateChatInput)
   const updateChatMessages = useChatStore((state) => state.updateChatMessages)
   const models = useModelStore((state) => state.models)
-  const selectedChat = useMemo(() => chats?.find((chat) => chat.isSelected), [chats])
+  const selectedChat = useMemo(() => chats.find((chat) => chat.isSelected), [chats])
   const selectedModel = models.find((model) => model.isSelected)
   const role = useSettingsStore((state) => state.role)
   const apiKey = useSettingsStore((state) => state.apiKey)
   const setStopFunction = useUtilsStore((state) => state.setStopFunction)
   const clearStopFunction = useUtilsStore((state) => state.clearStopFunction)
+  const currentChatIdRef = useRef<string | undefined>(undefined)
 
-  const { error, handleInputChange, handleSubmit, input, status, messages, stop } = useChat({
-    id: selectedChat?.id?.toString(), // Convert to string for useChat
-    api: '/api/chat',
-    initialInput: selectedChat?.input || '',
-    initialMessages: selectedChat?.messages || [],
-    onFinish: (message) => {
-      // Update store when generation is complete
-      if (selectedChat) {
-        updateChatMessages([...messages, message])
-      }
-    },
-    body: {
-      model: selectedModel?.name,
-      role,
-      apiKey,
-    },
-  })
+  const { error, handleInputChange, handleSubmit, input, status, messages, stop, setInput } =
+    useChat({
+      id: selectedChat?.id,
+      api: '/api/chat',
+      initialInput: selectedChat?.input || '',
+      initialMessages: selectedChat?.messages || [],
+      body: {
+        model: selectedModel?.name,
+        role,
+        apiKey,
+      },
+    })
 
   useEffect(() => {
     setStopFunction(stop)
     return () => clearStopFunction()
   }, [stop, setStopFunction, clearStopFunction])
 
+  useEffect(() => {
+    if (!selectedChat) {
+      return
+    }
+
+    const chatSwitched = currentChatIdRef.current !== selectedChat.id
+
+    if (chatSwitched) {
+      setInput(selectedChat.input || '')
+      currentChatIdRef.current = selectedChat.id
+      return
+    }
+
+    if (status === 'streaming' || messages.length === 0) {
+      return
+    }
+
+    const messagesChanged = JSON.stringify(messages) !== JSON.stringify(selectedChat.messages)
+
+    if (messagesChanged) {
+      updateChatMessages(messages)
+    }
+  }, [selectedChat, messages, status, setInput, updateChatMessages])
+
   const isLoading = status === 'streaming' || status === 'submitted'
 
-  useEffect(() => {
-    if (!selectedChat) return
-
-    const timeoutId = setTimeout(() => {
-      if (input !== selectedChat.input && !isLoading) {
-        updateChatInput(input)
-      }
-    }, 300)
-
-    return () => clearTimeout(timeoutId)
-  }, [input, selectedChat, updateChatInput, isLoading])
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    updateChatInput(event.target.value)
+    handleInputChange(event)
+  }
 
   const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
     handleSubmit(event)
@@ -75,7 +89,7 @@ export default function Chat() {
         <ChatTextarea
           selectedChatId={selectedChat?.id}
           input={input}
-          onChange={handleInputChange}
+          onChange={handleChange}
           onSendMessage={handleSendMessage}
         />
         <button
