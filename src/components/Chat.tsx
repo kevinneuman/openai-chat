@@ -2,7 +2,7 @@
 
 import { useChat } from '@ai-sdk/react'
 import type { ChangeEvent, FormEvent, MouseEvent } from 'react'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useCallback } from 'react'
 import { PiPaperPlaneRightFill } from 'react-icons/pi'
 import ChatMessages from './ChatMessages'
 import ChatTextarea from './ChatTextarea'
@@ -17,7 +17,7 @@ export default function Chat() {
   const updateChatMessages = useChatStore((state) => state.updateChatMessages)
   const models = useModelStore((state) => state.models)
   const selectedChat = useMemo(() => chats.find((chat) => chat.isSelected), [chats])
-  const selectedModel = models.find((model) => model.isSelected)
+  const selectedModel = useMemo(() => models.find((model) => model.isSelected), [models])
   const role = useSettingsStore((state) => state.role)
   const apiKey = useSettingsStore((state) => state.apiKey)
   const setStopFunction = useUtilsStore((state) => state.setStopFunction)
@@ -59,7 +59,14 @@ export default function Chat() {
       return
     }
 
-    const messagesChanged = JSON.stringify(messages) !== JSON.stringify(selectedChat.messages)
+    const messagesChanged =
+      messages.length !== selectedChat.messages.length ||
+      messages.some(
+        (msg, index) =>
+          !selectedChat.messages[index] ||
+          msg.id !== selectedChat.messages[index].id ||
+          msg.content !== selectedChat.messages[index].content,
+      )
 
     if (messagesChanged) {
       updateChatMessages(messages)
@@ -68,18 +75,28 @@ export default function Chat() {
 
   const isLoading = status === 'streaming' || status === 'submitted'
 
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    updateChatInput(event.target.value)
-    handleInputChange(event)
-  }
+  const handleChange = useCallback(
+    (event: ChangeEvent<HTMLTextAreaElement>) => {
+      updateChatInput(event.target.value)
+      handleInputChange(event)
+    },
+    [updateChatInput, handleInputChange],
+  )
 
-  const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
-    handleSubmit(event)
-  }
+  const handleSendMessage = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      updateChatInput('')
+      handleSubmit(event)
+    },
+    [updateChatInput, handleSubmit],
+  )
 
-  const handleSendMessageClick = (event: MouseEvent<HTMLButtonElement>) => {
-    handleSendMessage(event as unknown as FormEvent<HTMLFormElement>)
-  }
+  const handleSendMessageClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      handleSendMessage(event as unknown as FormEvent<HTMLFormElement>)
+    },
+    [handleSendMessage],
+  )
 
   return (
     <div className="overflow-hidden flex flex-col flex-1 gap-2">

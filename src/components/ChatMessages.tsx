@@ -1,7 +1,7 @@
 'use client'
 
 import type { Message } from 'ai/react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { PiStopFill } from 'react-icons/pi'
 import ChatMessage from './ChatMessage'
 import ThreeDotsLoader from './ThreeDotsLoader'
@@ -17,15 +17,15 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
   const ref = useRef<HTMLDivElement>(null)
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true)
 
-  let errorMessage = ''
-  if (error) {
+  const errorMessage = useMemo(() => {
+    if (!error) return ''
     try {
       const errorObject = JSON.parse(error.message)
-      errorMessage = errorObject.message
+      return errorObject.message
     } catch {
-      errorMessage = 'An unexpected error has occurred'
+      return 'An unexpected error has occurred'
     }
-  }
+  }, [error])
 
   const justify = messages.length === 0 ? 'justify-center' : 'justify-start'
 
@@ -35,16 +35,15 @@ export default function ChatMessages({ isLoading, messages, stop, error }: Props
     }
   }, [messages, shouldScrollToBottom])
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (ref.current) {
       const isAtBottom =
         ref.current.scrollTop + ref.current.clientHeight === ref.current.scrollHeight
       setShouldScrollToBottom(isAtBottom)
     }
-  }
+  }, [])
 
   const lastMessage = messages?.[messages.length - 1]
-
   const shouldShowBotLoadingMessage = isLoading && lastMessage && lastMessage.role === 'user'
 
   return (

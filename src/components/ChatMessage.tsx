@@ -1,5 +1,5 @@
 import type { Message } from 'ai/react'
-import React from 'react'
+import React, { memo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import CommonLayout from './CommonLayout'
@@ -9,7 +9,7 @@ type Props = {
   message: Message
 }
 
-export default function ChatMessage({ message }: Props) {
+function ChatMessage({ message }: Props) {
   const isBot = message.role === 'assistant'
 
   return (
@@ -177,3 +177,5 @@ export default function ChatMessage({ message }: Props) {
     </CommonLayout>
   )
 }
+
+export default memo(ChatMessage)
